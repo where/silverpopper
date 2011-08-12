@@ -23,29 +23,22 @@ class Silverpopper
     }
 
     doc = send_xml_api_request(request_body)
-    
-    if successful?(doc)
-      self.session_id = result_dom(doc).elements['SESSIONID'].text
-    else
-      raise "Failure to login to silverpop"
-    end
+    validate_success!(doc, "Failure to login to silverpop") 
+    self.session_id = result_dom(doc).elements['SESSIONID'].text
   end
   
   def logout
-    xml = String.new
-    markup = Builder::XmlMarkup.new(:target => xml, :indent => 1)
-    markup.Envelope{
-      markup.Body{
-        markup.Logout
+    request_body = String.new
+    xml = Builder::XmlMarkup.new(:target => request_body, :indent => 1)
+    xml.Envelope{
+      xml.Body{
+        xml.Logout
       }
     }
-    doc = send_xml_api_request(xml)
 
-    if successful?(doc)
-      self.session_id = nil
-    else
-      raise "Failure to logout"
-    end
+    doc = send_xml_api_request(request_body)
+    validate_success!(doc, "Failure to logout of silverpop")
+    self.session_id = nil
   end
 
 
@@ -323,5 +316,11 @@ private
   def session_id=(session_id)
     @session_id = session_id.blank? ? nil : ";jsessionid=#{session_id}"
     session_id
+  end
+
+  def validate_success!(document, message)
+    unless successful?(document)
+      raise message
+    end
   end
 end

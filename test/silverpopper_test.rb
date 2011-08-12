@@ -13,10 +13,7 @@ class SilverpoppperTest < Test::Unit::TestCase
   end
 
   def test_login
-    s = Silverpopper.new(
-      :user_name => 'testman',
-      :password  => 'pass',
-      :pod       => 5)
+    s = new_silverpop
 
     expect_login
     assert_equal "3631784201", s.login
@@ -24,33 +21,19 @@ class SilverpoppperTest < Test::Unit::TestCase
 
 
   def test_expect_malformed_login_response
-    expect_send_request('<?xml version="1.0" encoding="UTF-8"?>
-<Envelope>
- <Body>
-  <Login>
-   <USERNAME>testman</USERNAME>
-   <PASSWORD>pass</PASSWORD>
-  </Login>
- </Body>
-</Envelope>
-', silverpop_url).returns(MockHTTPartyResponse.new(200, "<Envelope><Body><RESULT></RESULT></Body></Envelope>"))
-
-    s = Silverpopper.new(
-      :user_name => 'testman',
-      :password  => 'pass',
-      :pod       => 5)
+    s = new_silverpop
+    
+    expect_send_request(login_request_xml, silverpop_url).
+      returns(MockHTTPartyResponse.new(200, 
+        "<Envelope><Body><RESULT></RESULT></Body></Envelope>"))
 
     assert_raise RuntimeError do
       s.login
     end
   end
 
-
   def test_logout
-    s = Silverpopper.new(
-      :user_name => 'testman',
-      :password  => 'pass',
-      :pod       => 5)
+    s = new_silverpop
 
     expect_login
     expect_logout
@@ -59,7 +42,29 @@ class SilverpoppperTest < Test::Unit::TestCase
     assert_nil s.instance_eval { @session_id }
   end
 
+  def test_logout_failure
+    s = new_silverpop
+
+    expect_login
+    expect_send_request(logout_request_xml, "#{silverpop_url};jsessionid=3631784201").returns(MockHTTPartyResponse.new(200, "<omg />"))
+    
+    s.login
+    assert_raise RuntimeError do
+      s.logout
+    end
+
+    assert_not_nil s.instance_eval { @session_id }
+  end
+
   private
+  
+  def new_silverpop
+    s = Silverpopper.new(
+      :user_name => 'testman',
+      :password  => 'pass',
+      :pod       => 5)    
+  end
+
   # use mocha to test api calls, this mimicks
   # how ActiveMerchant tests payment gateway
   # api calls
@@ -69,20 +74,11 @@ class SilverpoppperTest < Test::Unit::TestCase
   end
 
   def expect_logout
-    expect_send_request("<Envelope>\n <Body>\n  <Logout/>\n </Body>\n</Envelope>\n", "#{silverpop_url};jsessionid=3631784201").returns(MockHTTPartyResponse.new(200, "<Envelope>\n<Body>\n  <RESULT>\n<SUCCESS>TRUE</SUCCESS>\n</RESULT>\n </Body>\n</Envelope>\n"))
+    expect_send_request(logout_request_xml, "#{silverpop_url};jsessionid=3631784201").returns(MockHTTPartyResponse.new(200, "<Envelope>\n<Body>\n  <RESULT>\n<SUCCESS>TRUE</SUCCESS>\n</RESULT>\n </Body>\n</Envelope>\n"))
   end
 
   def expect_login
-    expect_send_request('<?xml version="1.0" encoding="UTF-8"?>
-<Envelope>
- <Body>
-  <Login>
-   <USERNAME>testman</USERNAME>
-   <PASSWORD>pass</PASSWORD>
-  </Login>
- </Body>
-</Envelope>
-', silverpop_url).returns(MockHTTPartyResponse.new(200, "<Envelope><Body><RESULT>
+    expect_send_request(login_request_xml, silverpop_url).returns(MockHTTPartyResponse.new(200, "<Envelope><Body><RESULT>
   <SUCCESS>true</SUCCESS>
   <SESSIONID>3631784201</SESSIONID>
   <ORGANIZATION_ID>322a4dc-c6f6d1ebd715e129037</ORGANIZATION_ID>
@@ -95,6 +91,24 @@ class SilverpoppperTest < Test::Unit::TestCase
 
   def expect_send_request(markup, url)
     HTTParty.expects(:post).with(url, {:body => markup, :headers => {'Content-type' => 'text/xml;charset=UTF-8'}})
+  end
+
+
+  def login_request_xml
+'<?xml version="1.0" encoding="UTF-8"?>
+<Envelope>
+ <Body>
+  <Login>
+   <USERNAME>testman</USERNAME>
+   <PASSWORD>pass</PASSWORD>
+  </Login>
+ </Body>
+</Envelope>
+'
+  end
+
+  def logout_request_xml
+    "<Envelope>\n <Body>\n  <Logout/>\n </Body>\n</Envelope>\n"
   end
 
   class MockHTTPartyResponse
