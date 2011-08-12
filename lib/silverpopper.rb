@@ -41,12 +41,9 @@ class Silverpopper
     self.session_id = nil
   end
 
-
-
-=begin
   def add_contact(options={})
-    list_id    = options.delete(:list_id)
-    auto_reply = options.delete(:auto_reply)
+    list_id    = options.delete('list_id')
+    auto_reply = options.delete('auto_reply')
 
     request_body = ''
     xml = Builder::XmlMarkup.new(:target => request_body, :indent => 1)
@@ -67,54 +64,15 @@ class Silverpopper
       end
     end
 
-    doc = process_api_request(request_body)
-    doc && doc.elements['Envelope'].elements['Body'].elements['RESULT'].elements['RecipientId'].text
+    doc = send_xml_api_request(request_body)
+
+    result_dom(doc).elements['RecipientId'].text rescue nil
   end
 
-private
 
-  def process_api_request(request_body)
-  end
-=end
-  def add_contact(contact_list_id, email, send_auto_reply, other)
-    xml = String.new
-    markup = Builder::XmlMarkup.new(:target => xml, :indent => 1)
 
-    markup.instruct!
-    markup.Envelope{
-      markup.Body{
-        markup.AddRecipient{
-          markup.LIST_ID contact_list_id
-          markup.CREATED_FROM "1"
-          markup.SEND_AUTOREPLY "true" if send_auto_reply
-          markup.COLUMN{
-            markup.NAME 'EMAIL'
-            markup.VALUE email
-          }
 
-          other.each { |field, value| markup.COLUMN{
-              markup.NAME(field.to_s)
-              markup.VALUE(value.to_s)
-            }
-          }
-        }
-      }
-    }
 
-    ret_val = send_api_request(xml)
-    doc = REXML::Document.new(ret_val)
-    begin
-      success = doc.elements['Envelope'].elements['Body'].elements['RESULT'].elements['SUCCESS'].text.downcase
-
-      if success == 'true'
-        recipient_id = doc.elements['Envelope'].elements['Body'].elements['RESULT'].elements['RecipientId'].text
-      end
-    rescue
-      raise "Invalid add_contact xml response"
-    end
-    
-    return success, recipient_id
-  end
 
   def select_contact(contact_list_id, email)
     xml = String.new

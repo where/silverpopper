@@ -1,5 +1,7 @@
 require 'helper'
 
+require 'active_support/ordered_hash'
+
 class SilverpoppperTest < Test::Unit::TestCase
   def test_initializer
     s = Silverpopper.new(
@@ -64,7 +66,14 @@ class SilverpoppperTest < Test::Unit::TestCase
     expect_add_contact
 
     s.login
-    s.add_contact("1", "testman@testman.com", false, {'Test Field' => 'Test Value'})
+
+    hash = ActiveSupport::OrderedHash.new
+    hash['list_id']     = '1'
+    hash['EMAIL']       = 'testman@testman.com'
+    hash['auto_reply']  = false
+    hash['Test Field'] = 'Test Value'
+
+    assert_equal "2007408974", s.add_contact(hash)
   end
 
   def test_add_contact_fails
@@ -75,9 +84,14 @@ class SilverpoppperTest < Test::Unit::TestCase
     
     s.login
 
-    assert_raise RuntimeError do
-      s.add_contact("1", "testman@testman.com", false, {'Test Field' => 'Test Value'})    
-    end
+    hash = ActiveSupport::OrderedHash.new
+    hash['list_id']     = '1'
+    hash['EMAIL']       = 'testman@testman.com'
+    hash['auto_reply']  = false
+    hash['Test Field'] = 'Test Value'
+
+    assert_nil s.add_contact(hash)
+
   end
 
   private

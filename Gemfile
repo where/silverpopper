@@ -9,4 +9,5 @@ group :development, :test do
   gem "rcov", ">= 0"
   gem 'mocha'
   gem 'fakeweb'
+  gem 'activesupport' # for ordered hash
 end
