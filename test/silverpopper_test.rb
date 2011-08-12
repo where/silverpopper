@@ -45,6 +45,20 @@ class SilverpoppperTest < Test::Unit::TestCase
     end
   end
 
+
+  def test_logout
+    s = Silverpopper.new(
+      :user_name => 'testman',
+      :password  => 'pass',
+      :pod       => 5)
+
+    expect_login
+    expect_logout
+    assert_equal "3631784201", s.login
+    s.logout
+    assert_nil s.instance_eval { @session_id }
+  end
+
   private
   # use mocha to test api calls, this mimicks
   # how ActiveMerchant tests payment gateway
@@ -52,6 +66,10 @@ class SilverpoppperTest < Test::Unit::TestCase
 
   def silverpop_url
     "http://api5.silverpop.com/XMLAPI"
+  end
+
+  def expect_logout
+    expect_send_request("<Envelope>\n <Body>\n  <Logout/>\n </Body>\n</Envelope>\n", "#{silverpop_url};jsessionid=3631784201").returns(MockHTTPartyResponse.new(200, "<Envelope>\n<Body>\n  <RESULT>\n<SUCCESS>TRUE</SUCCESS>\n</RESULT>\n </Body>\n</Envelope>\n"))
   end
 
   def expect_login

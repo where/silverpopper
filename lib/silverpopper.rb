@@ -33,6 +33,28 @@ class Silverpopper
   
 
 
+  def logout
+    xml = String.new
+    markup = Builder::XmlMarkup.new(:target => xml, :indent => 1)
+    markup.Envelope{
+      markup.Body{
+        markup.Logout
+      }
+    }
+    ret_val = send_api_request(xml)
+    doc = REXML::Document.new(ret_val)
+
+    begin
+      success = doc.elements['Envelope'].elements['Body'].elements['RESULT'].elements['SUCCESS'].text.downcase
+      self.session_id = nil
+      return success
+    rescue
+      throw "Invalid logout xml response"
+    end
+  end
+
+
+
 =begin
   def add_contact(options={})
     list_id    = options.delete(:list_id)
@@ -66,27 +88,6 @@ private
   def process_api_request(request_body)
   end
 =end
-
-  def logout
-    xml = String.new
-    markup = Builder::XmlMarkup.new(:target => xml, :indent => 1)
-    markup.Envelope{
-      markup.Body{
-        markup.Logout
-      }
-    }
-    ret_val = send_api_request(xml)
-    doc = REXML::Document.new(ret_val)
-
-    begin
-      success = doc.elements['Envelope'].elements['Body'].elements['RESULT'].elements['SUCCESS'].text.downcase
-
-      return success
-    rescue
-      throw "Invalid logout xml response"
-    end
-  end
-
   def add_contact(contact_list_id, email, send_auto_reply, other)
     xml = String.new
     markup = Builder::XmlMarkup.new(:target => xml, :indent => 1)
@@ -325,7 +326,7 @@ private
   end
 
   def session_id=(session_id)
-    @session_id = ";jsessionid=#{session_id}"
+    @session_id = session_id.blank? ? nil : ";jsessionid=#{session_id}"
     session_id
   end
 end
