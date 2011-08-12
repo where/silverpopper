@@ -1,5 +1,5 @@
 class Silverpopper
-
+  attr_reader :user_name, :password, :pod
   def initialize(options={})
     @user_name = options[:user_name]
     @password  = options[:password]

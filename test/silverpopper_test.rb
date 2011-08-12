@@ -1,7 +1,15 @@
 require 'helper'
 
 class SilverpoppperTest < Test::Unit::TestCase
-  def test_something_for_real
-    flunk "hey buddy, you should probably rename this file and start testing for real"
+  def test_initializer
+    s = Silverpopper.new(
+      :user_name => 'testman',
+      :password  => 'pass',
+      :pod       => 1)
+
+    assert_equal 'testman', s.user_name
+    assert_equal 'pass',    s.password
+    assert_equal 1,         s.pod
   end
+
 end
