@@ -48,19 +48,19 @@ private
 
 
   def login
-    xml = String.new
-    markup = Builder::XmlMarkup.new(:target => xml, :indent => 1)
-    markup.instruct!
-    markup.Envelope{
-      markup.Body{
-        markup.Login{
-          markup.USERNAME(self.user_name)
-          markup.PASSWORD(self.password)
+    request_body = String.new
+    xml = Builder::XmlMarkup.new(:target => request_body, :indent => 1)
+    xml.instruct!
+    xml.Envelope{
+      xml.Body{
+        xml.Login{
+          xml.USERNAME(self.user_name)
+          xml.PASSWORD(self.password)
         }
       }
     }
 
-    doc = send_xml_api_request(xml)
+    doc = send_xml_api_request(request_body)
     
     if successful?(doc)
       self.session_id = result_dom(doc).elements['SESSIONID'].text
