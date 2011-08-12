@@ -19,7 +19,7 @@ class SilverpoppperTest < Test::Unit::TestCase
       :pod       => 5)
 
     expect_login
-    s.login
+    assert_equal "3631784201", s.login
   end
 
 

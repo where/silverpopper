@@ -60,20 +60,13 @@ private
       }
     }
 
-    ret_val = send_api_request(xml)
-    doc = REXML::Document.new(ret_val)
+    doc = send_xml_api_request(xml)
     
-    success = doc.elements['Envelope'].elements['Body'].elements['RESULT'].elements['SUCCESS'].text.downcase rescue 'boom'
-
-    if success == 'true'
-      session_id = doc.elements['Envelope'].elements['Body'].elements['RESULT'].elements['SESSIONID'].text
+    if successful?(doc)
+      self.session_id = result_dom(doc).elements['SESSIONID'].text
     else
       raise "Failure to login to silverpop"
     end
-    
-    @session_id = ";jsessionid=#{session_id}"
-
-    return success.downcase, session_id
   end
 
   def logout
@@ -315,15 +308,27 @@ private
     return send_request(markup, "http://api#{@pod}.silverpop.com/XMLAPI#{@session_id}")
   end
 
+  def send_xml_api_request(markup)
+    result = send_api_request(markup)
+    REXML::Document.new(result)
+  end
+
   def send_transact_request(markup)
     return send_request(markup, "http://transact#{@pod}.silverpop.com/XTMail#{@session_id}")
   end
 
-
   def successful?(doc)
-    success = doc.elements['Envelope'].elements['Body'].elements['RESULT'].elements['SUCCESS'].text.downcase
+    success = result_dom(doc).elements['SUCCESS'].text.downcase rescue 'false'
     success == 'true'
   end
 
+  def result_dom(dom)
+    dom.elements['Envelope'].elements['Body'].elements['RESULT']
+  end
 
+
+  def session_id=(session_id)
+    @session_id = ";jsessionid=#{session_id}"
+    session_id
+  end
 end
