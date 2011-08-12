@@ -54,8 +54,8 @@ private
     markup.Envelope{
       markup.Body{
         markup.Login{
-          markup.USERNAME(@user_name)
-          markup.PASSWORD(@password)
+          markup.USERNAME(self.user_name)
+          markup.PASSWORD(self.password)
         }
       }
     }
@@ -63,14 +63,12 @@ private
     ret_val = send_api_request(xml)
     doc = REXML::Document.new(ret_val)
     
-    begin
-      success = doc.elements['Envelope'].elements['Body'].elements['RESULT'].elements['SUCCESS'].text.downcase
+    success = doc.elements['Envelope'].elements['Body'].elements['RESULT'].elements['SUCCESS'].text.downcase rescue 'boom'
 
-      if success == 'true'
-        session_id = doc.elements['Envelope'].elements['Body'].elements['RESULT'].elements['SESSIONID'].text
-      end
-    rescue
-      throw "Invalid login xml response"
+    if success == 'true'
+      session_id = doc.elements['Envelope'].elements['Body'].elements['RESULT'].elements['SESSIONID'].text
+    else
+      raise "Failure to login to silverpop"
     end
     
     @session_id = ";jsessionid=#{session_id}"
