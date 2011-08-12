@@ -1,4 +1,5 @@
 require 'builder'
+require 'httparty'
 
 class Silverpopper
   attr_reader :user_name, :password, :pod
@@ -258,8 +259,6 @@ private
 
     ret_val = send_api_request(xml)
     doc = REXML::Document.new(ret_val)
-    #puts xml
-    #return doc
     begin
       success = doc.elements['Envelope'].elements['Body'].elements['RESULT'].elements['SUCCESS'].text.downcase
     rescue
@@ -291,7 +290,6 @@ private
       }
     }
 
-    #puts xml
     begin
       ret_val = send_transact_request(xml)
     rescue
@@ -307,16 +305,12 @@ private
   end
 
   private
+
   def send_request(markup, url)
-    uri = URI.parse(url)
+    resp = HTTParty.post(url, :body => markup, :headers => {'Content-type' => 'text/xml;charset=UTF-8'})
+    raise "Request Failed" unless resp.code == 200 || resp.code == 201
 
-    http = Net::HTTP.new(uri.host, uri.port)
-
-    request = Net::HTTP::Post.new(uri.request_uri)
-    request.add_field "Content-Type", "text/xml;charset=UTF-8"
-    request.body = markup
-
-    return http.request(request).body
+    return resp.body
   end
 
   def send_api_request(markup)

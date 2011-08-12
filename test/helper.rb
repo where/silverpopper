@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'bundler'
 require 'fakeweb'
+require 'mocha'
 
 begin
   Bundler.setup(:default, :development)

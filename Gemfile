@@ -1,6 +1,7 @@
 source "http://rubygems.org"
 
 gem 'builder'
+gem 'httparty'
 
 group :development, :test do
   gem "bundler", "~> 1.0.0"

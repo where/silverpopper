@@ -18,8 +18,50 @@ class SilverpoppperTest < Test::Unit::TestCase
       :password  => 'pass',
       :pod       => 5)
 
+    expect_login
     s.login
+  end
 
+
+  private
+  # use mocha to test api calls, this mimicks
+  # how ActiveMerchant tests payment gateway
+  # api calls
+
+  def silverpop_url
+    "http://api5.silverpop.com/XMLAPI"
+  end
+
+  def expect_login
+    expect_send_request('<?xml version="1.0" encoding="UTF-8"?>
+<Envelope>
+ <Body>
+  <Login>
+   <USERNAME>testman</USERNAME>
+   <PASSWORD>pass</PASSWORD>
+  </Login>
+ </Body>
+</Envelope>
+', silverpop_url).returns(MockHTTPartyResponse.new(200, "<Envelope><Body><RESULT>
+  <SUCCESS>true</SUCCESS>
+  <SESSIONID>3631784201</SESSIONID>
+  <ORGANIZATION_ID>322a4dc-c6f6d1ebd715e129037</ORGANIZATION_ID>
+  <SESSION_ENCODING>;jsessionid=36ADDFB31784201</SESSION_ENCODING>
+  </RESULT>
+ </Body>
+</Envelope>
+")) 
+  end
+
+  def expect_send_request(markup, url)
+    HTTParty.expects(:post).with(url, {:body => markup, :headers => {'Content-type' => 'text/xml;charset=UTF-8'}})
+  end
+
+  class MockHTTPartyResponse
+    attr_reader :code, :body
+    def initialize(code, body)
+      @code, @body = code, body
+    end
   end
 
 end
