@@ -31,8 +31,6 @@ class Silverpopper
     end
   end
   
-
-
   def logout
     xml = String.new
     markup = Builder::XmlMarkup.new(:target => xml, :indent => 1)
@@ -41,15 +39,12 @@ class Silverpopper
         markup.Logout
       }
     }
-    ret_val = send_api_request(xml)
-    doc = REXML::Document.new(ret_val)
+    doc = send_xml_api_request(xml)
 
-    begin
-      success = doc.elements['Envelope'].elements['Body'].elements['RESULT'].elements['SUCCESS'].text.downcase
+    if successful?(doc)
       self.session_id = nil
-      return success
-    rescue
-      throw "Invalid logout xml response"
+    else
+      raise "Failure to logout"
     end
   end
 
