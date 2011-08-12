@@ -12,4 +12,14 @@ class SilverpoppperTest < Test::Unit::TestCase
     assert_equal 1,         s.pod
   end
 
+  def test_login
+    s = Silverpopper.new(
+      :user_name => 'testman',
+      :password  => 'pass',
+      :pod       => 5)
+
+    s.login
+
+  end
+
 end

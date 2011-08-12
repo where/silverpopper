@@ -1,3 +1,5 @@
+require 'builder'
+
 class Silverpopper
   attr_reader :user_name, :password, :pod
   def initialize(options={})
@@ -268,8 +270,6 @@ private
   end
 
   def send_transact_mail(email, transaction_id, campaign_id, personalization)
-    Assert.argument_is_of_type(Hash, personalization, 'personalization')
-    
     xml = String.new
     markup = Builder::XmlMarkup.new(:target => xml, :indent => 1)
 
@@ -308,9 +308,6 @@ private
 
   private
   def send_request(markup, url)
-    Assert.argument_is_string(markup)
-    Assert.argument_is_string(url)
-
     uri = URI.parse(url)
 
     http = Net::HTTP.new(uri.host, uri.port)

@@ -1,5 +1,7 @@
 require 'rubygems'
 require 'bundler'
+require 'fakeweb'
+
 begin
   Bundler.setup(:default, :development)
 rescue Bundler::BundlerError => e
@@ -15,3 +17,5 @@ require 'silverpopper'
 
 class Test::Unit::TestCase
 end
+
+FakeWeb.allow_net_connect = false
