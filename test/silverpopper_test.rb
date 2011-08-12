@@ -94,6 +94,31 @@ class SilverpoppperTest < Test::Unit::TestCase
 
   end
 
+  def test_select_contact
+    s = new_silverpop
+
+    expect_login
+    expect_select_contact
+
+    s.login
+    expected = {:hash => 'with stuff'}
+    assert_equal expected, s.select_contact(1, 'testman@testman.com')
+  end
+
+  def test_select_contact_fails
+    s = new_silverpop
+
+    expect_login
+    expect_send_request(select_contact_xml, silverpop_session_url).returns(MockHTTPartyResponse.new(200, "<omg />"))
+
+    s.login
+    
+    assert_raise RuntimeError do
+      s.select_contact('1', 'testman@testman.com')
+    end
+    
+  end
+
   private
   
   def new_silverpop
@@ -113,6 +138,10 @@ class SilverpoppperTest < Test::Unit::TestCase
 
   def silverpop_session_url
     "#{silverpop_url};jsessionid=3631784201"
+  end
+
+  def expect_select_contact
+    expect_send_request(select_contact_xml, silverpop_session_url).returns(MockHTTPartyResponse.new(200, success_select_xml_response))
   end
 
   def expect_add_contact
@@ -186,6 +215,24 @@ class SilverpoppperTest < Test::Unit::TestCase
 </Envelope>
 '
   end
+
+  def select_contact_xml
+'<?xml version="1.0" encoding="UTF-8"?>
+<Envelope>
+ <Body>
+  <SelectRecipientData>
+   <LIST_ID>1</LIST_ID>
+   <EMAIL>testman@testman.com</EMAIL>
+  </SelectRecipientData>
+ </Body>
+</Envelope>
+'
+  end
+
+  def success_select_xml_response
+"<Envelope>\n<Body>\n  <RESULT>\n<SUCCESS>TRUE</SUCCESS>\n<EMAIL>kmazaika@gmail.com</EMAIL>\n<Email>kmazaika@gmail.com</Email>\n<RecipientId>698338803</RecipientId>\n<EmailType>0</EmailType>\n<LastModified>8/10/11 3:15 PM</LastModified>\n<CreatedFrom>1</CreatedFrom>\n<OptedIn>3/30/11 5:38 PM</OptedIn>\n<OptedOut/>\n<ResumeSendDate/>\n<ORGANIZATION_ID>322a4dd7-12ca943aa0c-c6f842ded9e6d11c5ffebd715e129037</ORGANIZATION_ID>\n<COLUMNS>\n<COLUMN>\n<NAME>2nd Zip Code</NAME>\n<VALUE>90211</VALUE>\n</COLUMN>\n<COLUMN>\n<NAME>AOL Segmenting</NAME>\n<VALUE>0</VALUE>\n</COLUMN>\n<COLUMN>\n<NAME>Address 1</NAME>\n<VALUE/>\n</COLUMN>\n<COLUMN>\n<NAME>Address 2</NAME>\n<VALUE/>\n</COLUMN>\n<COLUMN>\n<NAME>Age</NAME>\n<VALUE/>\n</COLUMN>\n<COLUMN>\n<NAME>Anual Income</NAME>\n<VALUE/>\n</COLUMN>\n<COLUMN>\n<NAME>Carrier</NAME>\n<VALUE/>\n</COLUMN>\n<COLUMN>\n<NAME>City</NAME>\n<VALUE/>\n</COLUMN>\n<COLUMN>\n<NAME>County</NAME>\n<VALUE/>\n</COLUMN>\n<COLUMN>\n<NAME>DMA</NAME>\n<VALUE/>\n</COLUMN>\n<COLUMN>\n<NAME>Device</NAME>\n<VALUE/>\n</COLUMN>\n<COLUMN>\n<NAME>Facebook Token</NAME>\n<VALUE/>\n</COLUMN>\n<COLUMN>\n<NAME>First Name</NAME>\n<VALUE/>\n</COLUMN>\n<COLUMN>\n<NAME>Gender</NAME>\n<VALUE/>\n</COLUMN>\n<COLUMN>\n<NAME>Last Name</NAME>\n<VALUE/>\n</COLUMN>\n<COLUMN>\n<NAME>Latitude</NAME>\n<VALUE/>\n</COLUMN>\n<COLUMN>\n<NAME>Longitude</NAME>\n<VALUE/>\n</COLUMN>\n<COLUMN>\n<NAME>Microsoft Segmenting</NAME>\n<VALUE>0</VALUE>\n</COLUMN>\n<COLUMN>\n<NAME>Mobile Phone</NAME>\n<VALUE/>\n</COLUMN>\n<COLUMN>\n<NAME>Other Phone</NAME>\n<VALUE/>\n</COLUMN>\n<COLUMN>\n<NAME>Source</NAME>\n<VALUE>where_web</VALUE>\n</COLUMN>\n<COLUMN>\n<NAME>State</NAME>\n<VALUE/>\n</COLUMN>\n<COLUMN>\n<NAME>User ID</NAME>\n<VALUE/>\n</COLUMN>\n<COLUMN>\n<NAME>Zip Code</NAME>\n<VALUE>02115</VALUE>\n</COLUMN>\n<COLUMN>\n<NAME>utm campaign</NAME>\n<VALUE/>\n</COLUMN>\n<COLUMN>\n<NAME>utm content</NAME>\n<VALUE/>\n</COLUMN>\n<COLUMN>\n<NAME>utm medium</NAME>\n<VALUE/>\n</COLUMN>\n<COLUMN>\n<NAME>utm term</NAME>\n<VALUE/>\n</COLUMN>\n</COLUMNS>\n</RESULT>\n </Body>\n</Envelope>\n"
+  end
+
 
   class MockHTTPartyResponse
     attr_reader :code, :body

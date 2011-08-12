@@ -69,27 +69,23 @@ class Silverpopper
     result_dom(doc).elements['RecipientId'].text rescue nil
   end
 
-
-
-
-
-
   def select_contact(contact_list_id, email)
-    xml = String.new
-    markup = Builder::XmlMarkup.new(:target => xml, :indent => 1)
+    request_body = String.new
+    xml = Builder::XmlMarkup.new(:target => request_body, :indent => 1)
 
-    markup.instruct!
-    markup.Envelope{
-      markup.Body{
-        markup.SelectRecipientData{
-          markup.LIST_ID contact_list_id
-          markup.EMAIL email
+    xml.instruct!
+    xml.Envelope{
+      xml.Body{
+        xml.SelectRecipientData{
+          xml.LIST_ID contact_list_id
+          xml.EMAIL email
         }
       }
     }
 
-    ret_val = send_api_request(xml)
-    doc = REXML::Document.new(ret_val)
+    doc = send_xml_api_request(request_body)
+    validate_success!(doc, "Failure to logout of silverpop")
+
     success = successful?(doc)
 
     selected = success ? Hash.from_xml(ret_val.to_s)['Envelope']['Body']['RESULT'] : nil
@@ -102,6 +98,22 @@ class Silverpopper
 
     return success, selected
   end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   def update_contact(contact_list_id, email, fields)
     xml = String.new
