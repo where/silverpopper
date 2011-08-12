@@ -56,6 +56,30 @@ class SilverpoppperTest < Test::Unit::TestCase
     assert_not_nil s.instance_eval { @session_id }
   end
 
+
+  def test_add_contact
+    s = new_silverpop
+
+    expect_login
+    expect_add_contact
+
+    s.login
+    s.add_contact("1", "testman@testman.com", false, {'Test Field' => 'Test Value'})
+  end
+
+  def test_add_contact_fails
+    s = new_silverpop
+
+    expect_login
+    expect_send_request(add_contact_xml, silverpop_session_url).returns(MockHTTPartyResponse.new(200, "<omg />"))
+    
+    s.login
+
+    assert_raise RuntimeError do
+      s.add_contact("1", "testman@testman.com", false, {'Test Field' => 'Test Value'})    
+    end
+  end
+
   private
   
   def new_silverpop
@@ -73,8 +97,25 @@ class SilverpoppperTest < Test::Unit::TestCase
     "http://api5.silverpop.com/XMLAPI"
   end
 
+  def silverpop_session_url
+    "#{silverpop_url};jsessionid=3631784201"
+  end
+
+  def expect_add_contact
+    expect_send_request(add_contact_xml, silverpop_session_url).returns(MockHTTPartyResponse.new(200, "<Envelope>
+<Body>
+  <RESULT>
+<SUCCESS>TRUE</SUCCESS>
+<RecipientId>2007408974</RecipientId>
+<ORGANIZATION_ID>322a4dd7-12ca943aa0c-c6f842ded9e6d11c5ffebd715e129037</ORGANIZATION_ID>
+</RESULT>
+ </Body>
+</Envelope>
+"))
+  end
+
   def expect_logout
-    expect_send_request(logout_request_xml, "#{silverpop_url};jsessionid=3631784201").returns(MockHTTPartyResponse.new(200, "<Envelope>\n<Body>\n  <RESULT>\n<SUCCESS>TRUE</SUCCESS>\n</RESULT>\n </Body>\n</Envelope>\n"))
+    expect_send_request(logout_request_xml, silverpop_session_url).returns(MockHTTPartyResponse.new(200, "<Envelope>\n<Body>\n  <RESULT>\n<SUCCESS>TRUE</SUCCESS>\n</RESULT>\n </Body>\n</Envelope>\n"))
   end
 
   def expect_login
@@ -109,6 +150,27 @@ class SilverpoppperTest < Test::Unit::TestCase
 
   def logout_request_xml
     "<Envelope>\n <Body>\n  <Logout/>\n </Body>\n</Envelope>\n"
+  end
+
+  def add_contact_xml
+'<?xml version="1.0" encoding="UTF-8"?>
+<Envelope>
+ <Body>
+  <AddRecipient>
+   <LIST_ID>1</LIST_ID>
+   <CREATED_FROM>1</CREATED_FROM>
+   <COLUMN>
+    <NAME>EMAIL</NAME>
+    <VALUE>testman@testman.com</VALUE>
+   </COLUMN>
+   <COLUMN>
+    <NAME>Test Field</NAME>
+    <VALUE>Test Value</VALUE>
+   </COLUMN>
+  </AddRecipient>
+ </Body>
+</Envelope>
+'
   end
 
   class MockHTTPartyResponse

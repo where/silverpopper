@@ -110,7 +110,7 @@ private
         recipient_id = doc.elements['Envelope'].elements['Body'].elements['RESULT'].elements['RecipientId'].text
       end
     rescue
-      throw "Invalid add_contact xml response"
+      raise "Invalid add_contact xml response"
     end
     
     return success, recipient_id
