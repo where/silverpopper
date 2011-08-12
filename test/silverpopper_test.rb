@@ -1,7 +1,7 @@
 require 'helper'
 
-class TestSilverpopper < Test::Unit::TestCase
-  should "probably rename this file and start testing for real" do
+class SilverpoppperTest < Test::Unit::TestCase
+  def test_something_for_real
     flunk "hey buddy, you should probably rename this file and start testing for real"
   end
 end
