@@ -145,4 +145,15 @@ module Silverpopper::Silverpop
     result_dom(doc).elements['MAILING_ID'].first.to_s
   end
 
+
+  protected
+
+  def successful?(doc)
+    success = result_dom(doc).elements['SUCCESS'].text.downcase rescue 'false'
+    success == 'true'
+  end
+
+  def result_dom(dom)
+    dom.elements['Envelope'].elements['Body'].elements['RESULT']
+  end
 end

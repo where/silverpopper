@@ -53,26 +53,13 @@ class Silverpopper::Client
     return resp.body
   end
 
-  def send_api_request(markup)
-    return send_request(markup, "http://api#{@pod}.silverpop.com/XMLAPI#{@session_id}")
-  end
-
   def send_xml_api_request(markup)
-    result = send_api_request(markup)
+    result = send_request(markup, "http://api#{@pod}.silverpop.com/XMLAPI#{@session_id}")
     REXML::Document.new(result)
   end
 
   def send_transact_request(markup)
     return send_request(markup, "http://transact#{@pod}.silverpop.com/XTMail#{@session_id}")
-  end
-
-  def successful?(doc)
-    success = result_dom(doc).elements['SUCCESS'].text.downcase rescue 'false'
-    success == 'true'
-  end
-
-  def result_dom(dom)
-    dom.elements['Envelope'].elements['Body'].elements['RESULT']
   end
 
   def session_id=(session_id)
