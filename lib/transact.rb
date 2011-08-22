@@ -25,14 +25,9 @@ module Silverpopper::Transact
       }
     }
 
-    begin
-      ret_val = send_transact_request(request_body)
-    rescue
-      return -2, 'Internal error while processing http request'
-    end
-
+    ret_val = send_transact_request(request_body)
     doc = REXML::Document.new(ret_val)
-    raise "failure to create transact mailing" if doc == nil || doc.elements['XTMAILING_RESPONSE'] == nil || doc.elements['XTMAILING_RESPONSE'].elements['ERROR_CODE'] == nil
+    validate_transact_success!(doc, "failure to send transact message")
 
     doc.elements['XTMAILING_RESPONSE'].elements['RECIPIENTS_RECEIVED'].text
   end
@@ -41,4 +36,18 @@ module Silverpopper::Transact
     return send_request(markup, "http://transact#{@pod}.silverpop.com/XTMail#{@session_id}")
   end
 
+
+  protected
+
+  def validate_transact_success!(document, message)
+    unless transact_successful?(document)
+      raise message
+    end
+  end
+
+  def transact_successful?(doc)
+    doc != nil &&
+      doc.elements['XTMAILING_RESPONSE'] != nil &&
+      doc.elements['XTMAILING_RESPONSE'].elements['ERROR_CODE'] != nil
+  end
 end

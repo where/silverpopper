@@ -12,38 +12,6 @@ class Silverpopper::Client
     @pod       = options['pod'] || 5
   end
 
-  def login
-    request_body = String.new
-    xml = Builder::XmlMarkup.new(:target => request_body, :indent => 1)
-    xml.instruct!
-    xml.Envelope{
-      xml.Body{
-        xml.Login{
-          xml.USERNAME(self.user_name)
-          xml.PASSWORD(self.password)
-        }
-      }
-    }
-
-    doc = send_xml_api_request(request_body)
-    validate_success!(doc, "Failure to login to silverpop") 
-    self.session_id = result_dom(doc).elements['SESSIONID'].text
-  end
-  
-  def logout
-    request_body = String.new
-    xml = Builder::XmlMarkup.new(:target => request_body, :indent => 1)
-    xml.Envelope{
-      xml.Body{
-        xml.Logout
-      }
-    }
-
-    doc = send_xml_api_request(request_body)
-    validate_success!(doc, "Failure to logout of silverpop")
-    self.session_id = nil
-  end
-
   private
 
   def send_request(markup, url)
@@ -58,9 +26,4 @@ class Silverpopper::Client
     session_id
   end
 
-  def validate_success!(document, message)
-    unless successful?(document)
-      raise message
-    end
-  end
 end
