@@ -143,29 +143,37 @@ class Silverpopper
     true
   end
 
-  def schedule_mailing(list_id, template_id, mailing_name, subject, from_name, from_address, reply_to, substitutions)
-    xml = String.new
-    markup = Builder::XmlMarkup.new(:target => xml, :indent => 1)
+  def schedule_mailing(options={})
+    list_id      = options.delete('list_id')
+    template_id  = options.delete('template_id')
+    mailing_name = options.delete('mailing_name')
+    subject      = options.delete('subject')
+    from_name    = options.delete('from_name')
+    from_address = options.delete('from_address')
+    reply_to     = options.delete('reply_to')
 
-    markup.instruct!
-    markup.Envelope{
-      markup.Body{
-        markup.ScheduleMailing{
-          markup.TEMPLATE_ID template_id
-          markup.LIST_ID list_id
-          markup.SEND_HTML
-          markup.SEND_TEXT
-          markup.MAILING_NAME mailing_name
-          markup.SUBJECT subject
-          markup.FROM_NAME from_name if from_name != ''
-          markup.FROM_ADDRESS from_address if from_address != ''
-          markup.REPLY_TO reply_to if reply_to != ''
-          if substitutions.length > 0
-            markup.SUBSTITUTIONS{
-              substitutions.each { |key, value|  
-                markup.SUBSTITUTION{
-                  markup.NAME key
-                  markup.VALUE value
+    request_body = String.new
+    xml = Builder::XmlMarkup.new(:target => request_body, :indent => 1)
+
+    xml.instruct!
+    xml.Envelope{
+      xml.Body{
+        xml.ScheduleMailing{
+          xml.TEMPLATE_ID template_id
+          xml.LIST_ID list_id
+          xml.SEND_HTML
+          xml.SEND_TEXT
+          xml.MAILING_NAME mailing_name
+          xml.SUBJECT subject
+          xml.FROM_NAME from_name if from_name != ''
+          xml.FROM_ADDRESS from_address if from_address != ''
+          xml.REPLY_TO reply_to if reply_to != ''
+          if options.length > 0
+            xml.SUBSTITUTIONS{
+              options.each { |key, value|  
+                xml.SUBSTITUTION{
+                  xml.NAME key
+                  xml.VALUE value
                 }
               }
             }
@@ -174,11 +182,7 @@ class Silverpopper
       }
     }
     
-
-    ret_val = send_api_request(xml)
-
-
-    doc = REXML::Document.new(ret_val)
+    doc = send_xml_api_request(request_body)
     validate_success!(doc, "Failure to update contact")
     result_dom(doc).elements['MAILING_ID'].first.to_s
  end
