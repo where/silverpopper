@@ -192,29 +192,29 @@ class Silverpopper
     transaction_id = options.delete('transaction_id')
     campaign_id    = options.delete('campaign_id')
 
-    xml = String.new
-    markup = Builder::XmlMarkup.new(:target => xml, :indent => 1)
+    request_body = String.new
+    xml = Builder::XmlMarkup.new(:target => request_body, :indent => 1)
 
-    # do not change the order of xml elements - Silverpop is very sensitive to order in context of Transact
-    markup.instruct!
-    markup.XTMAILING{
-      markup.CAMPAIGN_ID campaign_id
-      markup.TRANSACTION_ID transaction_id
-      markup.SEND_AS_BATCH 'false'
-      markup.RECIPIENT{
-        markup.EMAIL email
-        markup.BODY_TYPE 'HTML'
-        options.each { |key, value|
-          markup.PERSONALIZATION{
-            markup.TAG_NAME key
-            markup.VALUE value
+    # note - order matters
+    xml.instruct!
+    xml.XTMAILING{
+      xml.CAMPAIGN_ID campaign_id
+      xml.TRANSACTION_ID transaction_id
+      xml.SEND_AS_BATCH 'false'
+      xml.RECIPIENT{
+        xml.EMAIL email
+        xml.BODY_TYPE 'HTML'
+        options.each do |key, value|
+          xml.PERSONALIZATION{
+            xml.TAG_NAME key
+            xml.VALUE value
           }
-        }
+        end
       }
     }
 
     begin
-      ret_val = send_transact_request(xml)
+      ret_val = send_transact_request(request_body)
     rescue
       return -2, 'Internal error while processing http request'
     end
