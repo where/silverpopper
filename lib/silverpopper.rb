@@ -4,9 +4,9 @@ require 'httparty'
 class Silverpopper
   attr_reader :user_name, :password, :pod
   def initialize(options={})
-    @user_name = options[:user_name]
-    @password  = options[:password]
-    @pod       = options[:pod] || 5
+    @user_name = options['user_name']
+    @password  = options['password']
+    @pod       = options['pod'] || 5
   end
 
   def login
