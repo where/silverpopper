@@ -198,5 +198,9 @@ module Silverpopper::Silverpop
       raise message
     end
   end
-  
+
+  def session_id=(session_id)
+    @session_id = session_id.blank? ? nil : ";jsessionid=#{session_id}"
+    session_id
+  end
 end
