@@ -2,7 +2,7 @@ require 'helper'
 
 require 'active_support/ordered_hash'
 
-class SilverpoppperTest < Test::Unit::TestCase
+class Silverpopper::ClientTest < Test::Unit::TestCase
   def test_initializer
     s = Silverpopper::Client.new(
       'user_name' => 'testman',
