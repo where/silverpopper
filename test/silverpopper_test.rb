@@ -90,7 +90,9 @@ class SilverpoppperTest < Test::Unit::TestCase
     hash['auto_reply']  = false
     hash['Test Field'] = 'Test Value'
 
-    assert_nil s.add_contact(hash)
+    assert_raise RuntimeError do
+      s.add_contact(hash)
+    end
 
   end
 
@@ -137,9 +139,7 @@ class SilverpoppperTest < Test::Unit::TestCase
     assert_raise RuntimeError do
       s.select_contact({'list_id' => '1', 'email' => 'testman@testman.com' })
     end
-    
   end
-
 
   def test_update_contact_fails
     s = new_silverpop
@@ -153,11 +153,24 @@ class SilverpoppperTest < Test::Unit::TestCase
     fields['Zip Code'] = '01430'
     fields['2nd Zip Code'] = '01320'
 
-    assert_nil s.update_contact('1', 'testman@testman.com', fields)
+    assert_raise RuntimeError do
+      s.update_contact('1', 'testman@testman.com', fields)
+    end
   end
 
   def test_update_contact
-    flunk
+    s = new_silverpop
+
+    expect_login
+    expect_update_contact
+    
+    s.login
+
+    fields = ActiveSupport::OrderedHash.new
+    fields['Zip Code'] = '01430'
+    fields['2nd Zip Code'] = '01320'
+
+    assert_equal '2007408974', s.update_contact('1', 'testman@testman.com', fields)
   end
 
   private
@@ -191,7 +204,20 @@ class SilverpoppperTest < Test::Unit::TestCase
   <RESULT>
 <SUCCESS>TRUE</SUCCESS>
 <RecipientId>2007408974</RecipientId>
-<ORGANIZATION_ID>322a4dd7-12ca943aa0c-c6f842ded9e6d11c5ffebd715e129037</ORGANIZATION_ID>
+<ORGANIZATION_ID>jhgjhjgjgjjh</ORGANIZATION_ID>
+</RESULT>
+ </Body>
+</Envelope>
+"))
+  end
+
+  def expect_update_contact
+    expect_send_request(update_contact_xml, silverpop_session_url).returns(MockHTTPartyResponse.new(200, "<Envelope>
+<Body>
+  <RESULT>
+<SUCCESS>TRUE</SUCCESS>
+<RecipientId>2007408974</RecipientId>
+<ORGANIZATION_ID>wqehjwqer</ORGANIZATION_ID>
 </RESULT>
  </Body>
 </Envelope>

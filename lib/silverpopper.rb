@@ -65,7 +65,7 @@ class Silverpopper
     end
 
     doc = send_xml_api_request(request_body)
-
+    validate_success!(doc, "Failure to add contact")
     result_dom(doc).elements['RecipientId'].text rescue nil
   end
 
@@ -85,10 +85,7 @@ class Silverpopper
     }
 
     doc = send_xml_api_request(request_body)
-    validate_success!(doc, "Failure to logout of silverpop")
-
-    return nil unless successful?(doc)
-
+    validate_success!(doc, "Failure to select contact")
 
     doc.elements['Envelope'].
       elements['Body'].
@@ -101,35 +98,29 @@ class Silverpopper
   end
 
   def update_contact(contact_list_id, email, fields)
-    xml = String.new
-    markup = Builder::XmlMarkup.new(:target => xml, :indent => 1)
+    request_body = String.new
+    xml = Builder::XmlMarkup.new(:target => request_body, :indent => 1)
 
-    markup.instruct!
-    markup.Envelope{
-      markup.Body{
-        markup.UpdateRecipient{
-          markup.LIST_ID contact_list_id
-          markup.OLD_EMAIL email
+    xml.instruct!
+    xml.Envelope{
+      xml.Body{
+        xml.UpdateRecipient{
+          xml.LIST_ID contact_list_id
+          xml.OLD_EMAIL email
 
           fields.each do |field, value|
-            markup.COLUMN {
-              markup.NAME  field
-              markup.VALUE value
+            xml.COLUMN {
+              xml.NAME  field
+              xml.VALUE value
             }
           end
         }
       }
     }
 
-    ret_val = send_api_request(xml)
-    doc = REXML::Document.new(ret_val)
-
-    return nil unless successful?(doc)
-
-    success = successful?(doc)
-
-    selected = success ? Hash.from_xml(ret_val.to_s)['Envelope']['Body']['RESULT']['RecipientId'] : nil
-    return success, selected
+    doc = send_xml_api_request(request_body)
+    validate_success!(doc, "Failure to update contact")
+    result_dom(doc).elements['RecipientId'].text rescue nil
   end
 
 
