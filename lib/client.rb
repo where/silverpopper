@@ -53,10 +53,6 @@ class Silverpopper::Client
     return resp.body
   end
 
-  def send_transact_request(markup)
-    return send_request(markup, "http://transact#{@pod}.silverpop.com/XTMail#{@session_id}")
-  end
-
   def session_id=(session_id)
     @session_id = session_id.blank? ? nil : ";jsessionid=#{session_id}"
     session_id

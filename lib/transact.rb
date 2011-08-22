@@ -37,4 +37,8 @@ module Silverpopper::Transact
     doc.elements['XTMAILING_RESPONSE'].elements['RECIPIENTS_RECEIVED'].text
   end
 
+  def send_transact_request(markup)
+    return send_request(markup, "http://transact#{@pod}.silverpop.com/XTMail#{@session_id}")
+  end
+
 end
