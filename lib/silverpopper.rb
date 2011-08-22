@@ -86,17 +86,17 @@ class Silverpopper
     doc = send_xml_api_request(request_body)
     validate_success!(doc, "Failure to logout of silverpop")
 
-    success = successful?(doc)
+    return nil unless successful?(doc)
 
-    selected = success ? Hash.from_xml(ret_val.to_s)['Envelope']['Body']['RESULT'] : nil
 
-    # Update Columns to be in reasonable format
-    columns = selected['COLUMNS']['COLUMN'].inject(Hash.new) do |hash, value| 
-      hash.merge({value['NAME'] => value['VALUE'] })
-    end rescue nil
-    selected['COLUMNS'] = columns if selected
-
-    return success, selected
+    doc.elements['Envelope'].
+      elements['Body'].
+      elements['RESULT'].
+      elements['COLUMNS'].collect do |i| 
+        i.respond_to?(:elements) ?  [i.elements['NAME'].first, i.elements['VALUE'].first] : nil
+      end.compact.inject(Hash.new) do |hash, value | 
+        hash.merge({value[0].to_s => (value[1].blank? ? nil : value[1].to_s)}) 
+    end
   end
 
 

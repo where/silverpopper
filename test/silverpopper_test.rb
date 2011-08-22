@@ -101,8 +101,29 @@ class SilverpoppperTest < Test::Unit::TestCase
     expect_select_contact
 
     s.login
-    expected = {:hash => 'with stuff'}
-    assert_equal expected, s.select_contact(1, 'testman@testman.com')
+
+    expected = {
+      "Zip Code"=>"02115",
+      "Latitude"=>nil,
+      "Last Name"=>nil,
+      "State"=>nil,
+      "2nd Zip Code"=>"90211",
+      "First Name"=>nil,
+      "Longitude"=>nil,
+      "Gender"=>nil,
+      "Address"=>nil,
+      "Age"=>nil,
+      "User ID"=>nil,
+      "City"=>nil
+    }
+    actual =  s.select_contact(1, 'testman@testman.com')
+
+    # to help debugging make sure all the keys that are expected have the expected value
+    expected.each do |key, value|
+      assert_equal value, actual[key], "expected [#{key.inspect}] to be #[#{value.inspect}] but was [#{actual[key].inspect}]"
+    end
+
+    assert_equal expected, actual
   end
 
   def test_select_contact_fails
@@ -230,7 +251,74 @@ class SilverpoppperTest < Test::Unit::TestCase
   end
 
   def success_select_xml_response
-"<Envelope>\n<Body>\n  <RESULT>\n<SUCCESS>TRUE</SUCCESS>\n<EMAIL>kmazaika@gmail.com</EMAIL>\n<Email>kmazaika@gmail.com</Email>\n<RecipientId>698338803</RecipientId>\n<EmailType>0</EmailType>\n<LastModified>8/10/11 3:15 PM</LastModified>\n<CreatedFrom>1</CreatedFrom>\n<OptedIn>3/30/11 5:38 PM</OptedIn>\n<OptedOut/>\n<ResumeSendDate/>\n<ORGANIZATION_ID>322a4dd7-12ca943aa0c-c6f842ded9e6d11c5ffebd715e129037</ORGANIZATION_ID>\n<COLUMNS>\n<COLUMN>\n<NAME>2nd Zip Code</NAME>\n<VALUE>90211</VALUE>\n</COLUMN>\n<COLUMN>\n<NAME>AOL Segmenting</NAME>\n<VALUE>0</VALUE>\n</COLUMN>\n<COLUMN>\n<NAME>Address 1</NAME>\n<VALUE/>\n</COLUMN>\n<COLUMN>\n<NAME>Address 2</NAME>\n<VALUE/>\n</COLUMN>\n<COLUMN>\n<NAME>Age</NAME>\n<VALUE/>\n</COLUMN>\n<COLUMN>\n<NAME>Anual Income</NAME>\n<VALUE/>\n</COLUMN>\n<COLUMN>\n<NAME>Carrier</NAME>\n<VALUE/>\n</COLUMN>\n<COLUMN>\n<NAME>City</NAME>\n<VALUE/>\n</COLUMN>\n<COLUMN>\n<NAME>County</NAME>\n<VALUE/>\n</COLUMN>\n<COLUMN>\n<NAME>DMA</NAME>\n<VALUE/>\n</COLUMN>\n<COLUMN>\n<NAME>Device</NAME>\n<VALUE/>\n</COLUMN>\n<COLUMN>\n<NAME>Facebook Token</NAME>\n<VALUE/>\n</COLUMN>\n<COLUMN>\n<NAME>First Name</NAME>\n<VALUE/>\n</COLUMN>\n<COLUMN>\n<NAME>Gender</NAME>\n<VALUE/>\n</COLUMN>\n<COLUMN>\n<NAME>Last Name</NAME>\n<VALUE/>\n</COLUMN>\n<COLUMN>\n<NAME>Latitude</NAME>\n<VALUE/>\n</COLUMN>\n<COLUMN>\n<NAME>Longitude</NAME>\n<VALUE/>\n</COLUMN>\n<COLUMN>\n<NAME>Microsoft Segmenting</NAME>\n<VALUE>0</VALUE>\n</COLUMN>\n<COLUMN>\n<NAME>Mobile Phone</NAME>\n<VALUE/>\n</COLUMN>\n<COLUMN>\n<NAME>Other Phone</NAME>\n<VALUE/>\n</COLUMN>\n<COLUMN>\n<NAME>Source</NAME>\n<VALUE>where_web</VALUE>\n</COLUMN>\n<COLUMN>\n<NAME>State</NAME>\n<VALUE/>\n</COLUMN>\n<COLUMN>\n<NAME>User ID</NAME>\n<VALUE/>\n</COLUMN>\n<COLUMN>\n<NAME>Zip Code</NAME>\n<VALUE>02115</VALUE>\n</COLUMN>\n<COLUMN>\n<NAME>utm campaign</NAME>\n<VALUE/>\n</COLUMN>\n<COLUMN>\n<NAME>utm content</NAME>\n<VALUE/>\n</COLUMN>\n<COLUMN>\n<NAME>utm medium</NAME>\n<VALUE/>\n</COLUMN>\n<COLUMN>\n<NAME>utm term</NAME>\n<VALUE/>\n</COLUMN>\n</COLUMNS>\n</RESULT>\n </Body>\n</Envelope>\n"
+'<Envelope>
+  <Body>
+    <RESULT>
+      <SUCCESS>TRUE</SUCCESS>
+      <EMAIL>testman@testman.com</EMAIL>
+      <Email>testman@testman.com</Email>
+      <RecipientId>7886786</RecipientId>
+      <EmailType>0</EmailType>
+      <LastModified>8/10/11 3:15 PM</LastModified>
+      <CreatedFrom>1</CreatedFrom>
+      <OptedIn>3/30/11 5:38 PM</OptedIn>
+      <OptedOut/>
+      <ResumeSendDate/>
+      <ORGANIZATION_ID>sdjfdsjkfs</ORGANIZATION_ID>
+      <COLUMNS>
+        <COLUMN>
+          <NAME>2nd Zip Code</NAME>
+          <VALUE>90211</VALUE>
+        </COLUMN>
+        <COLUMN>
+          <NAME>Address</NAME>
+          <VALUE/>
+        </COLUMN>
+        <COLUMN>
+          <NAME>Age</NAME>
+          <VALUE/>
+        </COLUMN>
+        <COLUMN>
+          <NAME>City</NAME>
+          <VALUE/>
+        </COLUMN>
+        <COLUMN>
+          <NAME>First Name</NAME>
+          <VALUE/>
+        </COLUMN>
+        <COLUMN>
+          <NAME>Gender</NAME>
+          <VALUE/>
+        </COLUMN>
+        <COLUMN>
+          <NAME>Last Name</NAME>
+          <VALUE/>
+        </COLUMN>
+        <COLUMN>
+          <NAME>Latitude</NAME>
+          <VALUE/>
+        </COLUMN>
+        <COLUMN>
+          <NAME>Longitude</NAME>
+          <VALUE/>
+        </COLUMN>
+        <COLUMN>
+          <NAME>State</NAME>
+          <VALUE/>
+        </COLUMN>
+        <COLUMN>
+          <NAME>User ID</NAME>
+          <VALUE/>
+        </COLUMN>
+        <COLUMN>
+          <NAME>Zip Code</NAME>
+          <VALUE>02115</VALUE>
+        </COLUMN>
+      </COLUMNS>
+    </RESULT>
+  </Body>
+</Envelope>
+'
   end
 
 
