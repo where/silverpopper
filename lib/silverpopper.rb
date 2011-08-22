@@ -185,32 +185,13 @@ class Silverpopper
     doc = send_xml_api_request(request_body)
     validate_success!(doc, "Failure to update contact")
     result_dom(doc).elements['MAILING_ID'].first.to_s
- end
+  end
 
+  def send_transact_mail(options={})
+    email          = options.delete('email')
+    transaction_id = options.delete('transaction_id')
+    campaign_id    = options.delete('campaign_id')
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  def send_transact_mail(email, transaction_id, campaign_id, personalization)
     xml = String.new
     markup = Builder::XmlMarkup.new(:target => xml, :indent => 1)
 
@@ -223,10 +204,10 @@ class Silverpopper
       markup.RECIPIENT{
         markup.EMAIL email
         markup.BODY_TYPE 'HTML'
-        personalization.each { |key, value|
+        options.each { |key, value|
           markup.PERSONALIZATION{
-          markup.TAG_NAME key
-          markup.VALUE value
+            markup.TAG_NAME key
+            markup.VALUE value
           }
         }
       }

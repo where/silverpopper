@@ -245,7 +245,7 @@ class SilverpoppperTest < Test::Unit::TestCase
     expect_send_transact_mail
 
     s.login
-    assert_equal '1', s.send_transact_mail('testman@testman.com', '123awesome', 9876, {'PASSWORD_RESET_LINK' => 'www.somelink.com'})
+    assert_equal '1', s.send_transact_mail('email' => 'testman@testman.com', 'transaction_id' => '123awesome', 'campaign_id' => 9876, 'PASSWORD_RESET_LINK' => 'www.somelink.com')
   end
 
   def test_transact_email_fail
@@ -257,7 +257,7 @@ class SilverpoppperTest < Test::Unit::TestCase
     s.login
 
     assert_raise RuntimeError do
-      s.send_transact_mail('testman@testman.com', '123awesome', 9876, {'PASSWORD_RESET_LINK' => 'www.somelink.com'})
+      s.send_transact_mail('email' => 'testman@testman.com', 'transaction_id' => '123awesome', 'campaign_id' => 9876, 'PASSWORD_RESET_LINK' => 'www.somelink.com')
     end
 
   end
