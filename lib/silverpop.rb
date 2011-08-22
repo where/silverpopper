@@ -23,7 +23,7 @@ module Silverpopper::Silverpop
     end
 
     doc = send_xml_api_request(request_body)
-    validate_success!(doc, "Failure to add contact")
+    validate_silverpop_success!(doc, "Failure to add contact")
     result_dom(doc).elements['RecipientId'].text rescue nil
   end
 
@@ -43,7 +43,7 @@ module Silverpopper::Silverpop
     }
 
     doc = send_xml_api_request(request_body)
-    validate_success!(doc, "Failure to select contact")
+    validate_silverpop_success!(doc, "Failure to select contact")
 
     result_dom(doc).elements['COLUMNS'].collect do |i| 
         i.respond_to?(:elements) ?  [i.elements['NAME'].first, i.elements['VALUE'].first] : nil
@@ -77,7 +77,7 @@ module Silverpopper::Silverpop
     }
 
     doc = send_xml_api_request(request_body)
-    validate_success!(doc, "Failure to update contact")
+    validate_silverpop_success!(doc, "Failure to update contact")
     result_dom(doc).elements['RecipientId'].text rescue nil
   end
 
@@ -97,7 +97,7 @@ module Silverpopper::Silverpop
     }
 
     doc = send_xml_api_request(request_body)
-    validate_success!(doc, "Failure to update contact")
+    validate_silverpop_success!(doc, "Failure to update contact")
     true
   end
 
@@ -141,14 +141,13 @@ module Silverpopper::Silverpop
     }
     
     doc = send_xml_api_request(request_body)
-    validate_success!(doc, "Failure to update contact")
+    validate_silverpop_success!(doc, "Failure to update contact")
     result_dom(doc).elements['MAILING_ID'].first.to_s
   end
 
-
   protected
 
-  def successful?(doc)
+  def silverpop_successful?(doc)
     success = result_dom(doc).elements['SUCCESS'].text.downcase rescue 'false'
     success == 'true'
   end
@@ -160,6 +159,12 @@ module Silverpopper::Silverpop
   def send_xml_api_request(markup)
     result = send_request(markup, "http://api#{@pod}.silverpop.com/XMLAPI#{@session_id}")
     REXML::Document.new(result)
+  end
+
+  def validate_silverpop_success!(document, message)
+    unless silverpop_successful?(document)
+      raise message
+    end
   end
   
 end
