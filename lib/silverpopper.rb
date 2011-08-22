@@ -87,10 +87,7 @@ class Silverpopper
     doc = send_xml_api_request(request_body)
     validate_success!(doc, "Failure to select contact")
 
-    doc.elements['Envelope'].
-      elements['Body'].
-      elements['RESULT'].
-      elements['COLUMNS'].collect do |i| 
+    result_dom(doc).elements['COLUMNS'].collect do |i| 
         i.respond_to?(:elements) ?  [i.elements['NAME'].first, i.elements['VALUE'].first] : nil
       end.compact.inject(Hash.new) do |hash, value | 
         hash.merge({value[0].to_s => (value[1].blank? ? nil : value[1].to_s)}) 
