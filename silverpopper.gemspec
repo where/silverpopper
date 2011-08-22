@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{silverpopper}
-  s.version = "0.0.0"
+  s.version = "0.1.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["WHERE, Inc"]
@@ -25,6 +25,44 @@ Gem::Specification.new do |s|
     "README.rdoc",
     "Rakefile",
     "VERSION",
+    "doc/LICENSE_txt.html",
+    "doc/Silverpopper.html",
+    "doc/Silverpopper/Client.html",
+    "doc/Silverpopper/Common.html",
+    "doc/Silverpopper/TransactApi.html",
+    "doc/Silverpopper/XmlApi.html",
+    "doc/created.rid",
+    "doc/images/brick.png",
+    "doc/images/brick_link.png",
+    "doc/images/bug.png",
+    "doc/images/bullet_black.png",
+    "doc/images/bullet_toggle_minus.png",
+    "doc/images/bullet_toggle_plus.png",
+    "doc/images/date.png",
+    "doc/images/find.png",
+    "doc/images/loadingAnimation.gif",
+    "doc/images/macFFBgHack.png",
+    "doc/images/package.png",
+    "doc/images/page_green.png",
+    "doc/images/page_white_text.png",
+    "doc/images/page_white_width.png",
+    "doc/images/plugin.png",
+    "doc/images/ruby.png",
+    "doc/images/tag_green.png",
+    "doc/images/wrench.png",
+    "doc/images/wrench_orange.png",
+    "doc/images/zoom.png",
+    "doc/index.html",
+    "doc/js/darkfish.js",
+    "doc/js/jquery.js",
+    "doc/js/quicksearch.js",
+    "doc/js/thickbox-compressed.js",
+    "doc/lib/client_rb.html",
+    "doc/lib/common_rb.html",
+    "doc/lib/silverpopper_rb.html",
+    "doc/lib/transact_api_rb.html",
+    "doc/lib/xml_api_rb.html",
+    "doc/rdoc.css",
     "lib/client.rb",
     "lib/common.rb",
     "lib/silverpopper.rb",
