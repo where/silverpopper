@@ -69,7 +69,8 @@ class Silverpopper
     result_dom(doc).elements['RecipientId'].text rescue nil
   end
 
-  def select_contact(contact_list_id, email)
+  def select_contact(options={})
+    contact_list_id, email = options.delete('list_id'), options.delete('email')
     request_body = String.new
     xml = Builder::XmlMarkup.new(:target => request_body, :indent => 1)
 
@@ -99,22 +100,6 @@ class Silverpopper
     end
   end
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   def update_contact(contact_list_id, email, fields)
     xml = String.new
     markup = Builder::XmlMarkup.new(:target => xml, :indent => 1)
@@ -126,10 +111,10 @@ class Silverpopper
           markup.LIST_ID contact_list_id
           markup.OLD_EMAIL email
 
-          fields.each do |field|
+          fields.each do |field, value|
             markup.COLUMN {
-              markup.NAME  field.first
-              markup.VALUE field.second
+              markup.NAME  field
+              markup.VALUE value
             }
           end
         }
@@ -138,11 +123,23 @@ class Silverpopper
 
     ret_val = send_api_request(xml)
     doc = REXML::Document.new(ret_val)
+
+    return nil unless successful?(doc)
+
     success = successful?(doc)
 
     selected = success ? Hash.from_xml(ret_val.to_s)['Envelope']['Body']['RESULT']['RecipientId'] : nil
     return success, selected
   end
+
+
+
+
+
+
+
+
+
 
 
 

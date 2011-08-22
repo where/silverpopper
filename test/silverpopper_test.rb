@@ -116,7 +116,7 @@ class SilverpoppperTest < Test::Unit::TestCase
       "User ID"=>nil,
       "City"=>nil
     }
-    actual =  s.select_contact(1, 'testman@testman.com')
+    actual =  s.select_contact({'list_id' => 1, 'email' => 'testman@testman.com' })
 
     # to help debugging make sure all the keys that are expected have the expected value
     expected.each do |key, value|
@@ -135,9 +135,29 @@ class SilverpoppperTest < Test::Unit::TestCase
     s.login
     
     assert_raise RuntimeError do
-      s.select_contact('1', 'testman@testman.com')
+      s.select_contact({'list_id' => '1', 'email' => 'testman@testman.com' })
     end
     
+  end
+
+
+  def test_update_contact_fails
+    s = new_silverpop
+
+    expect_login
+    expect_send_request(update_contact_xml, silverpop_session_url).returns(MockHTTPartyResponse.new(200, "<omg />"))
+    
+    s.login
+
+    fields = ActiveSupport::OrderedHash.new
+    fields['Zip Code'] = '01430'
+    fields['2nd Zip Code'] = '01320'
+
+    assert_nil s.update_contact('1', 'testman@testman.com', fields)
+  end
+
+  def test_update_contact
+    flunk
   end
 
   private
@@ -232,6 +252,27 @@ class SilverpoppperTest < Test::Unit::TestCase
     <VALUE>Test Value</VALUE>
    </COLUMN>
   </AddRecipient>
+ </Body>
+</Envelope>
+'
+  end
+
+  def update_contact_xml
+'<?xml version="1.0" encoding="UTF-8"?>
+<Envelope>
+ <Body>
+  <UpdateRecipient>
+   <LIST_ID>1</LIST_ID>
+   <OLD_EMAIL>testman@testman.com</OLD_EMAIL>
+   <COLUMN>
+    <NAME>Zip Code</NAME>
+    <VALUE>01430</VALUE>
+   </COLUMN>
+   <COLUMN>
+    <NAME>2nd Zip Code</NAME>
+    <VALUE>01320</VALUE>
+   </COLUMN>
+  </UpdateRecipient>
  </Body>
 </Envelope>
 '
