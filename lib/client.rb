@@ -1,9 +1,6 @@
-require 'builder'
-require 'httparty'
-
 class Silverpopper::Client
-  include Silverpopper::Transact
-  include Silverpopper::Silverpop
+  include Silverpopper::TransactApi
+  include Silverpopper::XmlApi
   include Silverpopper::Common
 
   attr_reader :user_name, :password, :pod

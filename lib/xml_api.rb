@@ -1,4 +1,4 @@
-module Silverpopper::Silverpop
+module Silverpopper::XmlApi
   def login
     request_body = String.new
     xml = Builder::XmlMarkup.new(:target => request_body, :indent => 1)

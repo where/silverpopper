@@ -1,4 +1,4 @@
-module Silverpopper::Transact
+module Silverpopper::TransactApi
 
   def send_transact_mail(options={})
     email          = options.delete('email')
