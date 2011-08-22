@@ -143,39 +143,6 @@ class Silverpopper
     true
   end
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   def schedule_mailing(list_id, template_id, mailing_name, subject, from_name, from_address, reply_to, substitutions)
     xml = String.new
     markup = Builder::XmlMarkup.new(:target => xml, :indent => 1)
@@ -206,17 +173,38 @@ class Silverpopper
         }
       }
     }
+    
 
     ret_val = send_api_request(xml)
-    doc = REXML::Document.new(ret_val)
-    begin
-      success = doc.elements['Envelope'].elements['Body'].elements['RESULT'].elements['SUCCESS'].text.downcase
-    rescue
-      throw "Invalid add_contact xml response"
-    end
 
-    return success
-  end
+
+    doc = REXML::Document.new(ret_val)
+    validate_success!(doc, "Failure to update contact")
+    result_dom(doc).elements['MAILING_ID'].first.to_s
+ end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   def send_transact_mail(email, transaction_id, campaign_id, personalization)
     xml = String.new
