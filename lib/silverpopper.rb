@@ -123,18 +123,6 @@ class Silverpopper
     result_dom(doc).elements['RecipientId'].text rescue nil
   end
 
-
-
-
-
-
-
-
-
-
-
-
-
   def send_mailing(email, mailing_id)
     xml = String.new
     markup = Builder::XmlMarkup.new(:target => xml, :indent => 1)
@@ -151,16 +139,42 @@ class Silverpopper
 
     ret_val = send_api_request(xml)
     doc = REXML::Document.new(ret_val)
-
-    #return doc
-    begin
-      success = doc.elements['Envelope'].elements['Body'].elements['RESULT'].elements['SUCCESS'].text.downcase
-    rescue
-      throw "Invalid add_contact xml response"
-    end
-
-    return success
+    validate_success!(doc, "Failure to update contact")
+    true
   end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   def schedule_mailing(list_id, template_id, mailing_name, subject, from_name, from_address, reply_to, substitutions)
     xml = String.new

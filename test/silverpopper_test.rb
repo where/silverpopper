@@ -173,6 +173,31 @@ class SilverpoppperTest < Test::Unit::TestCase
     assert_equal '2007408974', s.update_contact(fields.merge({'list_id' => '1', 'email' => 'testman@testman.com'}))
   end
 
+
+  def test_send_mailing_fail
+    s = new_silverpop
+
+    expect_login
+    expect_send_request(send_mailing_xml, silverpop_session_url).returns(MockHTTPartyResponse.new(200, "<omg />"))
+
+    s.login
+
+    assert_raise RuntimeError do
+      s.send_mailing('testman@testman.com', 908220)
+    end
+  end
+
+  def test_send_mailing
+    s = new_silverpop
+
+    expect_login
+    expect_send_mailing
+
+    s.login
+
+    assert_equal true, s.send_mailing('testman@testman.com', 908220)
+  end
+
   private
   
   def new_silverpop
@@ -197,6 +222,19 @@ class SilverpoppperTest < Test::Unit::TestCase
   def expect_select_contact
     expect_send_request(select_contact_xml, silverpop_session_url).returns(MockHTTPartyResponse.new(200, success_select_xml_response))
   end
+
+  def expect_send_mailing
+    expect_send_request(send_mailing_xml, silverpop_session_url).returns(MockHTTPartyResponse.new(200, "<Envelope>
+<Body>
+  <RESULT>
+<SUCCESS>TRUE</SUCCESS>
+<ORGANIZATION_ID>jhgjhjgjgjjh</ORGANIZATION_ID>
+</RESULT>
+ </Body>
+</Envelope>
+"))
+  end
+
 
   def expect_add_contact
     expect_send_request(add_contact_xml, silverpop_session_url).returns(MockHTTPartyResponse.new(200, "<Envelope>
@@ -283,6 +321,18 @@ class SilverpoppperTest < Test::Unit::TestCase
 '
   end
 
+  def send_mailing_xml
+'<?xml version="1.0" encoding="UTF-8"?>
+<Envelope>
+ <Body>
+  <SendMailing>
+   <MailingId>908220</MailingId>
+   <RecipientEmail>testman@testman.com</RecipientEmail>
+  </SendMailing>
+ </Body>
+</Envelope>
+'
+  end
   def update_contact_xml
 '<?xml version="1.0" encoding="UTF-8"?>
 <Envelope>
@@ -312,6 +362,19 @@ class SilverpoppperTest < Test::Unit::TestCase
    <LIST_ID>1</LIST_ID>
    <EMAIL>testman@testman.com</EMAIL>
   </SelectRecipientData>
+ </Body>
+</Envelope>
+'
+  end
+
+  def send_mailing_xml
+'<?xml version="1.0" encoding="UTF-8"?>
+<Envelope>
+ <Body>
+  <SendMailing>
+   <MailingId>908220</MailingId>
+   <RecipientEmail>testman@testman.com</RecipientEmail>
+  </SendMailing>
  </Body>
 </Envelope>
 '
