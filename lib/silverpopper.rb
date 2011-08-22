@@ -123,22 +123,22 @@ class Silverpopper
     result_dom(doc).elements['RecipientId'].text rescue nil
   end
 
-  def send_mailing(email, mailing_id)
-    xml = String.new
-    markup = Builder::XmlMarkup.new(:target => xml, :indent => 1)
+  def send_mailing(options={})
+    email, mailing_id = options.delete('email'), options.delete('mailing_id')
+    request_body = String.new
+    xml = Builder::XmlMarkup.new(:target => request_body, :indent => 1)
 
-    markup.instruct!
-    markup.Envelope{
-      markup.Body{
-        markup.SendMailing{
-          markup.MailingId mailing_id
-          markup.RecipientEmail email
+    xml.instruct!
+    xml.Envelope{
+      xml.Body{
+        xml.SendMailing{
+          xml.MailingId mailing_id
+          xml.RecipientEmail email
         }
       }
     }
 
-    ret_val = send_api_request(xml)
-    doc = REXML::Document.new(ret_val)
+    doc = send_xml_api_request(request_body)
     validate_success!(doc, "Failure to update contact")
     true
   end

@@ -183,7 +183,7 @@ class SilverpoppperTest < Test::Unit::TestCase
     s.login
 
     assert_raise RuntimeError do
-      s.send_mailing('testman@testman.com', 908220)
+      s.send_mailing('email' => 'testman@testman.com', 'mailing_id' => 908220)
     end
   end
 
@@ -195,7 +195,7 @@ class SilverpoppperTest < Test::Unit::TestCase
 
     s.login
 
-    assert_equal true, s.send_mailing('testman@testman.com', 908220)
+    assert_equal true, s.send_mailing('email' => 'testman@testman.com', 'mailing_id' => 908220)
   end
 
   private
