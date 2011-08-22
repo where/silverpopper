@@ -97,7 +97,10 @@ class Silverpopper
     end
   end
 
-  def update_contact(contact_list_id, email, fields)
+  def update_contact(options={})
+    contact_list_id = options.delete('list_id')
+    email           = options.delete('email')
+
     request_body = String.new
     xml = Builder::XmlMarkup.new(:target => request_body, :indent => 1)
 
@@ -108,7 +111,7 @@ class Silverpopper
           xml.LIST_ID contact_list_id
           xml.OLD_EMAIL email
 
-          fields.each do |field, value|
+          options.each do |field, value|
             xml.COLUMN {
               xml.NAME  field
               xml.VALUE value

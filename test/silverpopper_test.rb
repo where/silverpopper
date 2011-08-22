@@ -154,7 +154,7 @@ class SilverpoppperTest < Test::Unit::TestCase
     fields['2nd Zip Code'] = '01320'
 
     assert_raise RuntimeError do
-      s.update_contact('1', 'testman@testman.com', fields)
+      s.update_contact(fields.merge({'list_id' => '1', 'email' => 'testman@testman.com'}))
     end
   end
 
@@ -170,7 +170,7 @@ class SilverpoppperTest < Test::Unit::TestCase
     fields['Zip Code'] = '01430'
     fields['2nd Zip Code'] = '01320'
 
-    assert_equal '2007408974', s.update_contact('1', 'testman@testman.com', fields)
+    assert_equal '2007408974', s.update_contact(fields.merge({'list_id' => '1', 'email' => 'testman@testman.com'}))
   end
 
   private
