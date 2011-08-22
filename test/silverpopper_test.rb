@@ -4,7 +4,7 @@ require 'active_support/ordered_hash'
 
 class SilverpoppperTest < Test::Unit::TestCase
   def test_initializer
-    s = Silverpopper.new(
+    s = Silverpopper::Client.new(
       'user_name' => 'testman',
       'password'  => 'pass',
       'pod'       => 1)
@@ -265,7 +265,7 @@ class SilverpoppperTest < Test::Unit::TestCase
   private
   
   def new_silverpop
-    s = Silverpopper.new(
+    s = Silverpopper::Client.new(
       'user_name' => 'testman',
       'password'  => 'pass',
       'pod'       =>  5)    
