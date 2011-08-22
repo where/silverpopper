@@ -53,11 +53,6 @@ class Silverpopper::Client
     return resp.body
   end
 
-  def send_xml_api_request(markup)
-    result = send_request(markup, "http://api#{@pod}.silverpop.com/XMLAPI#{@session_id}")
-    REXML::Document.new(result)
-  end
-
   def send_transact_request(markup)
     return send_request(markup, "http://transact#{@pod}.silverpop.com/XTMail#{@session_id}")
   end

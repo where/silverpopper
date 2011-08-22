@@ -156,4 +156,10 @@ module Silverpopper::Silverpop
   def result_dom(dom)
     dom.elements['Envelope'].elements['Body'].elements['RESULT']
   end
+
+  def send_xml_api_request(markup)
+    result = send_request(markup, "http://api#{@pod}.silverpop.com/XMLAPI#{@session_id}")
+    REXML::Document.new(result)
+  end
+  
 end
