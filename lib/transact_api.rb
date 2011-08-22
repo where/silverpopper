@@ -1,5 +1,10 @@
+# Provide an interface to the Transact API calls that Silverpop exposes
 module Silverpopper::TransactApi
-
+  # Send an email through the Transact API
+  #
+  # arguments are a hash, that expect string keys for: email, transaction_id, campaign_id.
+  # any additional arguments are used as personalization arguments; hash key is 
+  # the personalization tag name, hash value is the personalization value
   def send_transact_mail(options={})
     email          = options.delete('email')
     transaction_id = options.delete('transaction_id')
@@ -25,26 +30,28 @@ module Silverpopper::TransactApi
       }
     }
 
-    ret_val = send_transact_request(request_body)
-    doc = REXML::Document.new(ret_val)
+    doc = send_transact_request(request_body)
     validate_transact_success!(doc, "failure to send transact message")
-
     doc.elements['XTMAILING_RESPONSE'].elements['RECIPIENTS_RECEIVED'].text
   end
 
-  def send_transact_request(markup)
-    return send_request(markup, "http://transact#{@pod}.silverpop.com/XTMail#{@session_id}")
-  end
-
-
   protected
 
+  # make transact api call, and parse the response with rexml
+  def send_transact_request(markup)
+    response = send_request(markup, 
+      "http://transact#{@pod}.silverpop.com/XTMail#{@session_id}")
+    REXML::Document.new(response)
+  end
+
+  # raise message provided unless the passed response was successful
   def validate_transact_success!(document, message)
     unless transact_successful?(document)
       raise message
     end
   end
 
+  # does the xml document indicate a transact successful response?
   def transact_successful?(doc)
     doc != nil &&
       doc.elements['XTMAILING_RESPONSE'] != nil &&

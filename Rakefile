@@ -17,10 +17,11 @@ Jeweler::Tasks.new do |gem|
   gem.name = "silverpopper"
   gem.homepage = "http://github.com/where/silverpopper"
   gem.license = "MIT"
-  gem.summary = %Q{TODO: one-line summary of your gem}
-  gem.description = %Q{TODO: longer description of your gem}
-  gem.email = "ceplett@where.com"
-  gem.authors = ["Chris Eplett"]
+  gem.summary = %Q{a simple interface to the Silverpop XMLAPI and Transact API}
+  gem.description = %Q{handle authentication, and wrap api calls in standard ruby code to
+                       so you don't have to think about xml when communicating with silverpop}
+  gem.email = "whereweb@where.com"
+  gem.authors = ["WHERE, Inc"]
   # dependencies defined in Gemfile
 end
 Jeweler::RubygemsDotOrgTasks.new

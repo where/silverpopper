@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+
+  <title>Module: Silverpopper::TransactApi</title>
+
+  <link rel="stylesheet" href="../rdoc.css" type="text/css" media="screen" />
+
+  <script src="../js/jquery.js" type="text/javascript" charset="utf-8"></script>
+  <script src="../js/thickbox-compressed.js" type="text/javascript" charset="utf-8"></script>
+  <script src="../js/quicksearch.js" type="text/javascript" charset="utf-8"></script>
+  <script src="../js/darkfish.js" type="text/javascript" charset="utf-8"></script>
+
+</head>
+<body id="top" class="module">
+
+  <div id="metadata">
+    <div id="home-metadata">
+      <div id="home-section" class="section">
+        <h3 class="section-header">
+          <a href="../index.html">Home</a>
+          <a href="../index.html#classes">Classes</a>
+          <a href="../index.html#methods">Methods</a>
+        </h3>
+      </div>
+    </div>
+
+    <div id="file-metadata">
+      <div id="file-list-section" class="section">
+        <h3 class="section-header">In Files</h3>
+        <div class="section-body">
+          <ul>
+          
+            <li><a href="../lib/transact_api_rb.html?TB_iframe=true&amp;height=550&amp;width=785"
+              class="thickbox" title="lib/transact_api.rb">lib/transact_api.rb</a></li>
+          
+          </ul>
+        </div>
+      </div>
+
+      
+    </div>
+
+    <div id="class-metadata">
+      
+
+      
+
+      
+
+      
+      <!-- Method Quickref -->
+      <div id="method-list-section" class="section">
+        <h3 class="section-header">Methods</h3>
+        <ul class="link-list">
+          
+          <li><a href="#method-i-send_transact_mail">#send_transact_mail</a></li>
+          
+          <li><a href="#method-i-send_transact_request">#send_transact_request</a></li>
+          
+          <li><a href="#method-i-transact_successful-3F">#transact_successful?</a></li>
+          
+          <li><a href="#method-i-validate_transact_success-21">#validate_transact_success!</a></li>
+          
+        </ul>
+      </div>
+      
+
+      
+    </div>
+
+    <div id="project-metadata">
+      
+      
+      <div id="fileindex-section" class="section project-section">
+        <h3 class="section-header">Files</h3>
+        <ul>
+        
+          <li class="file"><a href="../LICENSE_txt.html">LICENSE.txt</a></li>
+        
+        </ul>
+      </div>
+      
+
+      <div id="classindex-section" class="section project-section">
+        <h3 class="section-header">Class/Module Index
+          <span class="search-toggle"><img src="../images/find.png"
+            height="16" width="16" alt="[+]"
+            title="show/hide quicksearch" /></span></h3>
+        <form action="#" method="get" accept-charset="utf-8" class="initially-hidden">
+        <fieldset>
+          <legend>Quicksearch</legend>
+          <input type="text" name="quicksearch" value=""
+            class="quicksearch-field" />
+        </fieldset>
+        </form>
+
+        <ul class="link-list">
+        
+          <li><a href="../Silverpopper.html">Silverpopper</a></li>
+        
+          <li><a href="../Silverpopper/Client.html">Silverpopper::Client</a></li>
+        
+          <li><a href="../Silverpopper/Common.html">Silverpopper::Common</a></li>
+        
+          <li><a href="../Silverpopper/TransactApi.html">Silverpopper::TransactApi</a></li>
+        
+          <li><a href="../Silverpopper/XmlApi.html">Silverpopper::XmlApi</a></li>
+        
+        </ul>
+        <div id="no-class-search-results" style="display: none;">No matching classes.</div>
+      </div>
+
+      
+    </div>
+  </div>
+
+  <div id="documentation">
+    <h1 class="module">Silverpopper::TransactApi</h1>
+
+    <div id="description" class="description">
+      
+<p>Provide an interface to the Transact API calls that Silverpop exposes</p>
+
+    </div><!-- description -->
+
+    
+    <div id="5Buntitled-5D" class="documentation-section">
+      
+
+      
+
+      
+
+      
+
+      <!-- Methods -->
+      
+      <div id="public-instance-method-details" class="method-section section">
+        <h3 class="section-header">Public Instance Methods</h3>
+
+      
+        <div id="send_transact_mail-method" class="method-detail ">
+          <a name="method-i-send_transact_mail"></a>
+
+          
+          <div class="method-heading">
+            <span class="method-name">send_transact_mail</span><span
+              class="method-args">(options={})</span>
+            <span class="method-click-advice">click to toggle source</span>
+          </div>
+          
+
+          <div class="method-description">
+            
+            <p>Send an email through the Transact API</p>
+
+<p>arguments are a hash, that expect string keys for: email, transaction_id,
+campaign_id. any additional arguments are used as personalization
+arguments; hash key is  the personalization tag name, hash value is the
+personalization value</p>
+            
+
+            
+            <div class="method-source-code" id="send_transact_mail-source">
+<pre>
+<span class="ruby-comment"># File lib/transact_api.rb, line 8</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">send_transact_mail</span>(<span class="ruby-identifier">options</span>={})
+  <span class="ruby-identifier">email</span>          = <span class="ruby-identifier">options</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-string">'email'</span>)
+  <span class="ruby-identifier">transaction_id</span> = <span class="ruby-identifier">options</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-string">'transaction_id'</span>)
+  <span class="ruby-identifier">campaign_id</span>    = <span class="ruby-identifier">options</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-string">'campaign_id'</span>)
+
+  <span class="ruby-identifier">request_body</span> = <span class="ruby-constant">String</span>.<span class="ruby-identifier">new</span>
+  <span class="ruby-identifier">xml</span> = <span class="ruby-constant">Builder</span><span class="ruby-operator">::</span><span class="ruby-constant">XmlMarkup</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">:target</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">request_body</span>, <span class="ruby-value">:indent</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">1</span>)
+
+  <span class="ruby-identifier">xml</span>.<span class="ruby-identifier">instruct!</span>
+  <span class="ruby-identifier">xml</span>.<span class="ruby-constant">XTMAILING</span>{
+    <span class="ruby-identifier">xml</span>.<span class="ruby-constant">CAMPAIGN_ID</span> <span class="ruby-identifier">campaign_id</span>
+    <span class="ruby-identifier">xml</span>.<span class="ruby-constant">TRANSACTION_ID</span> <span class="ruby-identifier">transaction_id</span>
+    <span class="ruby-identifier">xml</span>.<span class="ruby-constant">SEND_AS_BATCH</span> <span class="ruby-string">'false'</span>
+    <span class="ruby-identifier">xml</span>.<span class="ruby-constant">RECIPIENT</span>{
+      <span class="ruby-identifier">xml</span>.<span class="ruby-constant">EMAIL</span> <span class="ruby-identifier">email</span>
+      <span class="ruby-identifier">xml</span>.<span class="ruby-constant">BODY_TYPE</span> <span class="ruby-string">'HTML'</span>
+      <span class="ruby-identifier">options</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">key</span>, <span class="ruby-identifier">value</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">xml</span>.<span class="ruby-constant">PERSONALIZATION</span>{
+          <span class="ruby-identifier">xml</span>.<span class="ruby-constant">TAG_NAME</span> <span class="ruby-identifier">key</span>
+          <span class="ruby-identifier">xml</span>.<span class="ruby-constant">VALUE</span> <span class="ruby-identifier">value</span>
+        }
+      <span class="ruby-keyword">end</span>
+    }
+  }
+
+  <span class="ruby-identifier">doc</span> = <span class="ruby-identifier">send_transact_request</span>(<span class="ruby-identifier">request_body</span>)
+  <span class="ruby-identifier">validate_transact_success!</span>(<span class="ruby-identifier">doc</span>, <span class="ruby-string">&quot;failure to send transact message&quot;</span>)
+  <span class="ruby-identifier">doc</span>.<span class="ruby-identifier">elements</span>[<span class="ruby-string">'XTMAILING_RESPONSE'</span>].<span class="ruby-identifier">elements</span>[<span class="ruby-string">'RECIPIENTS_RECEIVED'</span>].<span class="ruby-identifier">text</span>
+<span class="ruby-keyword">end</span></pre>
+            </div><!-- send_transact_mail-source -->
+            
+          </div>
+
+          
+
+          
+        </div><!-- send_transact_mail-method -->
+
+      
+      </div><!-- public-instance-method-details -->
+    
+      <div id="protected-instance-method-details" class="method-section section">
+        <h3 class="section-header">Protected Instance Methods</h3>
+
+      
+        <div id="send_transact_request-method" class="method-detail ">
+          <a name="method-i-send_transact_request"></a>
+
+          
+          <div class="method-heading">
+            <span class="method-name">send_transact_request</span><span
+              class="method-args">(markup)</span>
+            <span class="method-click-advice">click to toggle source</span>
+          </div>
+          
+
+          <div class="method-description">
+            
+            <p>make transact api call, and parse the response with rexml</p>
+            
+
+            
+            <div class="method-source-code" id="send_transact_request-source">
+<pre>
+<span class="ruby-comment"># File lib/transact_api.rb, line 41</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">send_transact_request</span>(<span class="ruby-identifier">markup</span>)
+  <span class="ruby-identifier">response</span> = <span class="ruby-identifier">send_request</span>(<span class="ruby-identifier">markup</span>, 
+    <span class="ruby-node">&quot;http://transact#{@pod}.silverpop.com/XTMail#{@session_id}&quot;</span>)
+  <span class="ruby-constant">REXML</span><span class="ruby-operator">::</span><span class="ruby-constant">Document</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">response</span>)
+<span class="ruby-keyword">end</span></pre>
+            </div><!-- send_transact_request-source -->
+            
+          </div>
+
+          
+
+          
+        </div><!-- send_transact_request-method -->
+
+      
+        <div id="transact_successful-3F-method" class="method-detail ">
+          <a name="method-i-transact_successful-3F"></a>
+
+          
+          <div class="method-heading">
+            <span class="method-name">transact_successful?</span><span
+              class="method-args">(doc)</span>
+            <span class="method-click-advice">click to toggle source</span>
+          </div>
+          
+
+          <div class="method-description">
+            
+            <p>does the xml document indicate a transact successful response?</p>
+            
+
+            
+            <div class="method-source-code" id="transact_successful-3F-source">
+<pre>
+<span class="ruby-comment"># File lib/transact_api.rb, line 55</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">transact_successful?</span>(<span class="ruby-identifier">doc</span>)
+  <span class="ruby-identifier">doc</span> <span class="ruby-operator">!=</span> <span class="ruby-keyword">nil</span> <span class="ruby-operator">&amp;&amp;</span>
+    <span class="ruby-identifier">doc</span>.<span class="ruby-identifier">elements</span>[<span class="ruby-string">'XTMAILING_RESPONSE'</span>] <span class="ruby-operator">!=</span> <span class="ruby-keyword">nil</span> <span class="ruby-operator">&amp;&amp;</span>
+    <span class="ruby-identifier">doc</span>.<span class="ruby-identifier">elements</span>[<span class="ruby-string">'XTMAILING_RESPONSE'</span>].<span class="ruby-identifier">elements</span>[<span class="ruby-string">'ERROR_CODE'</span>] <span class="ruby-operator">!=</span> <span class="ruby-keyword">nil</span>
+<span class="ruby-keyword">end</span></pre>
+            </div><!-- transact_successful-3F-source -->
+            
+          </div>
+
+          
+
+          
+        </div><!-- transact_successful-3F-method -->
+
+      
+        <div id="validate_transact_success-21-method" class="method-detail ">
+          <a name="method-i-validate_transact_success-21"></a>
+
+          
+          <div class="method-heading">
+            <span class="method-name">validate_transact_success!</span><span
+              class="method-args">(document, message)</span>
+            <span class="method-click-advice">click to toggle source</span>
+          </div>
+          
+
+          <div class="method-description">
+            
+            <p>raise message provided unless the passed response was successful</p>
+            
+
+            
+            <div class="method-source-code" id="validate_transact_success-21-source">
+<pre>
+<span class="ruby-comment"># File lib/transact_api.rb, line 48</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">validate_transact_success!</span>(<span class="ruby-identifier">document</span>, <span class="ruby-identifier">message</span>)
+  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">transact_successful?</span>(<span class="ruby-identifier">document</span>)
+    <span class="ruby-identifier">raise</span> <span class="ruby-identifier">message</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+            </div><!-- validate_transact_success-21-source -->
+            
+          </div>
+
+          
+
+          
+        </div><!-- validate_transact_success-21-method -->
+
+      
+      </div><!-- protected-instance-method-details -->
+    
+    </div><!-- 5Buntitled-5D -->
+  
+
+  </div><!-- documentation -->
+
+  <div id="validator-badges">
+    <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+    <p><small>Generated with the <a href="http://deveiate.org/projects/Darkfish-Rdoc/">Darkfish
+      Rdoc Generator</a> 2</small>.</p>
+  </div>
+
+</body>
+</html>
+

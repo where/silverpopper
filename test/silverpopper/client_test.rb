@@ -10,7 +10,7 @@ class Silverpopper::ClientTest < Test::Unit::TestCase
       'pod'       => 1)
 
     assert_equal 'testman', s.user_name
-    assert_equal 'pass',    s.password
+    assert_equal 'pass',    s.send(:password)
     assert_equal 1,         s.pod
   end
 

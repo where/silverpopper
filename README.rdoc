@@ -1,6 +1,9 @@
 = silverpopper
 
-Description goes here.
+a simple interface to the Silverpop XMLAPI and Transact API
+
+handle authentication, and wrap api calls in standard ruby code to
+so you don't have to think about xml when communicating with silverpop
 
 == Contributing to silverpopper
  
@@ -14,6 +17,6 @@ Description goes here.
 
 == Copyright
 
-Copyright (c) 2011 Chris Eplett. See LICENSE.txt for
+Copyright (c) 2011 WHERE, Inc. See LICENSE.txt for
 further details.
 

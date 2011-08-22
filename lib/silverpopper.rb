@@ -1,3 +1,4 @@
+# Silverpopper; the ruby silverpop api wrapper!
 module Silverpopper; end;
 
 # dependencies
