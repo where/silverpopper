@@ -239,11 +239,9 @@ class Silverpopper
     end
 
     doc = REXML::Document.new(ret_val)
-    return -1 if doc == nil || doc.elements['XTMAILING_RESPONSE'] == nil || doc.elements['XTMAILING_RESPONSE'].elements['ERROR_CODE'] == nil
-    return doc.elements['XTMAILING_RESPONSE'].elements['ERROR_CODE'].text, doc.elements['XTMAILING_RESPONSE'].elements['ERROR_STRING'].text
-    
-    #return ret_val
-    #return doc
+    raise "failure to create transact mailing" if doc == nil || doc.elements['XTMAILING_RESPONSE'] == nil || doc.elements['XTMAILING_RESPONSE'].elements['ERROR_CODE'] == nil
+
+    doc.elements['XTMAILING_RESPONSE'].elements['RECIPIENTS_RECEIVED'].text
   end
 
   private
