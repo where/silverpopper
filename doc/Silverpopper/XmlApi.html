@@ -63,6 +63,8 @@
           
           <li><a href="#method-i-logout">#logout</a></li>
           
+          <li><a href="#method-i-remove_contact">#remove_contact</a></li>
+          
           <li><a href="#method-i-result_dom">#result_dom</a></li>
           
           <li><a href="#method-i-schedule_mailing">#schedule_mailing</a></li>
@@ -145,6 +147,8 @@ the lead.</p>
     </div><!-- description -->
 
     
+    
+    
     <div id="5Buntitled-5D" class="documentation-section">
       
 
@@ -175,10 +179,10 @@ the lead.</p>
             
             <p>Insert a lead into silverpop</p>
 
-<p>expects a hash containing the strings: list_id and optionally the string
-auto_reply.  any entries in the hash will be used to populate the column
-name and values of the lead. Returns the recipient id if successfully
-added, raises on error.</p>
+<p>expects a hash containing the strings: list_id, email and optionally the
+string auto_reply.  any entries in the hash will be used to populate the
+column name and values of the lead. Returns the recipient id if
+successfully added, raises on error.</p>
             
 
             
@@ -187,6 +191,7 @@ added, raises on error.</p>
 <span class="ruby-comment"># File lib/xml_api.rb, line 45</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">add_contact</span>(<span class="ruby-identifier">options</span>={})
   <span class="ruby-identifier">list_id</span>    = <span class="ruby-identifier">options</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-string">'list_id'</span>)
+  <span class="ruby-identifier">email</span>      = <span class="ruby-identifier">options</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-string">'email'</span>)
   <span class="ruby-identifier">auto_reply</span> = <span class="ruby-identifier">options</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-string">'auto_reply'</span>)
 
   <span class="ruby-identifier">request_body</span> = <span class="ruby-string">''</span>
@@ -198,6 +203,12 @@ added, raises on error.</p>
         <span class="ruby-identifier">xml</span>.<span class="ruby-constant">LIST_ID</span> <span class="ruby-identifier">list_id</span>
         <span class="ruby-identifier">xml</span>.<span class="ruby-constant">CREATED_FROM</span> <span class="ruby-string">'1'</span>
         <span class="ruby-identifier">xml</span>.<span class="ruby-constant">SEND_AUTOREPLY</span> <span class="ruby-string">'true'</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">auto_reply</span>
+
+        <span class="ruby-identifier">xml</span>.<span class="ruby-constant">COLUMN</span> <span class="ruby-keyword">do</span>
+          <span class="ruby-identifier">xml</span>.<span class="ruby-constant">NAME</span> <span class="ruby-string">'EMAIL'</span>
+          <span class="ruby-identifier">xml</span>.<span class="ruby-constant">VALUE</span> <span class="ruby-identifier">email</span>
+        <span class="ruby-keyword">end</span>
+
         <span class="ruby-identifier">options</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">field</span>, <span class="ruby-identifier">value</span><span class="ruby-operator">|</span>
           <span class="ruby-identifier">xml</span>.<span class="ruby-constant">COLUMN</span> <span class="ruby-keyword">do</span>
             <span class="ruby-identifier">xml</span>.<span class="ruby-constant">NAME</span> <span class="ruby-identifier">field</span>.<span class="ruby-identifier">to_s</span>
@@ -312,6 +323,66 @@ added, raises on error.</p>
         </div><!-- logout-method -->
 
       
+        <div id="remove_contact-method" class="method-detail ">
+          <a name="method-i-remove_contact"></a>
+
+          
+          <div class="method-heading">
+            <span class="method-name">remove_contact</span><span
+              class="method-args">(options={})</span>
+            <span class="method-click-advice">click to toggle source</span>
+          </div>
+          
+
+          <div class="method-description">
+            
+            <p>Remove the contact from a list.</p>
+
+<p>expects a hash containing the strings: list_id and email. Any additional
+columns passed will be treated as ‘COLUMNS’, these COLUMNS are used in
+the case there is not a primary key on email, and generally will not be
+used.</p>
+            
+
+            
+            <div class="method-source-code" id="remove_contact-source">
+<pre>
+<span class="ruby-comment"># File lib/xml_api.rb, line 86</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">remove_contact</span>(<span class="ruby-identifier">options</span>={})
+  <span class="ruby-identifier">list_id</span>    = <span class="ruby-identifier">options</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-string">'list_id'</span>)
+  <span class="ruby-identifier">email</span>      = <span class="ruby-identifier">options</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-string">'email'</span>)
+
+  <span class="ruby-identifier">request_body</span> = <span class="ruby-string">''</span>
+  <span class="ruby-identifier">xml</span> = <span class="ruby-constant">Builder</span><span class="ruby-operator">::</span><span class="ruby-constant">XmlMarkup</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">:target</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">request_body</span>, <span class="ruby-value">:indent</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">1</span>)
+  <span class="ruby-identifier">xml</span>.<span class="ruby-identifier">instruct!</span>
+  <span class="ruby-identifier">xml</span>.<span class="ruby-constant">Envelope</span> <span class="ruby-keyword">do</span>
+    <span class="ruby-identifier">xml</span>.<span class="ruby-constant">Body</span> <span class="ruby-keyword">do</span>
+      <span class="ruby-identifier">xml</span>.<span class="ruby-constant">RemoveRecipient</span> <span class="ruby-keyword">do</span>
+        <span class="ruby-identifier">xml</span>.<span class="ruby-constant">LIST_ID</span> <span class="ruby-identifier">list_id</span>
+        <span class="ruby-identifier">xml</span>.<span class="ruby-constant">EMAIL</span>   <span class="ruby-identifier">email</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">email</span>.<span class="ruby-identifier">nil?</span>
+        <span class="ruby-identifier">options</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">field</span>, <span class="ruby-identifier">value</span><span class="ruby-operator">|</span>
+          <span class="ruby-identifier">xml</span>.<span class="ruby-constant">COLUMN</span> <span class="ruby-keyword">do</span>
+            <span class="ruby-identifier">xml</span>.<span class="ruby-constant">NAME</span> <span class="ruby-identifier">field</span>.<span class="ruby-identifier">to_s</span>
+            <span class="ruby-identifier">xml</span>.<span class="ruby-constant">VALUE</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">to_s</span>
+          <span class="ruby-keyword">end</span>
+        <span class="ruby-keyword">end</span>
+      <span class="ruby-keyword">end</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+  <span class="ruby-identifier">doc</span> = <span class="ruby-identifier">send_xml_api_request</span>(<span class="ruby-identifier">request_body</span>)
+  <span class="ruby-identifier">validate_silverpop_success!</span>(<span class="ruby-identifier">doc</span>, <span class="ruby-string">&quot;Failure to remove contact&quot;</span>)
+  <span class="ruby-keyword">true</span>
+<span class="ruby-keyword">end</span></pre>
+            </div><!-- remove_contact-source -->
+            
+          </div>
+
+          
+
+          
+        </div><!-- remove_contact-method -->
+
+      
         <div id="schedule_mailing-method" class="method-detail ">
           <a name="method-i-schedule_mailing"></a>
 
@@ -335,7 +406,7 @@ the Mailing Id.</p>
             
             <div class="method-source-code" id="schedule_mailing-source">
 <pre>
-<span class="ruby-comment"># File lib/xml_api.rb, line 167</span>
+<span class="ruby-comment"># File lib/xml_api.rb, line 207</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">schedule_mailing</span>(<span class="ruby-identifier">options</span>={})
   <span class="ruby-identifier">list_id</span>      = <span class="ruby-identifier">options</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-string">'list_id'</span>)
   <span class="ruby-identifier">template_id</span>  = <span class="ruby-identifier">options</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-string">'template_id'</span>)
@@ -411,9 +482,10 @@ containing properties (columns) of the lead.</p>
             
             <div class="method-source-code" id="select_contact-source">
 <pre>
-<span class="ruby-comment"># File lib/xml_api.rb, line 78</span>
+<span class="ruby-comment"># File lib/xml_api.rb, line 117</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">select_contact</span>(<span class="ruby-identifier">options</span>={})
-  <span class="ruby-identifier">contact_list_id</span>, <span class="ruby-identifier">email</span> = <span class="ruby-identifier">options</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-string">'list_id'</span>), <span class="ruby-identifier">options</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-string">'email'</span>)
+  <span class="ruby-identifier">contact_list_id</span> = <span class="ruby-identifier">options</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-string">'list_id'</span>)
+  <span class="ruby-identifier">email</span>           = <span class="ruby-identifier">options</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-string">'email'</span>)
   <span class="ruby-identifier">request_body</span> = <span class="ruby-constant">String</span>.<span class="ruby-identifier">new</span>
   <span class="ruby-identifier">xml</span> = <span class="ruby-constant">Builder</span><span class="ruby-operator">::</span><span class="ruby-constant">XmlMarkup</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">:target</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">request_body</span>, <span class="ruby-value">:indent</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">1</span>)
 
@@ -467,7 +539,7 @@ containing properties (columns) of the lead.</p>
             
             <div class="method-source-code" id="send_mailing-source">
 <pre>
-<span class="ruby-comment"># File lib/xml_api.rb, line 141</span>
+<span class="ruby-comment"># File lib/xml_api.rb, line 181</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">send_mailing</span>(<span class="ruby-identifier">options</span>={})
   <span class="ruby-identifier">email</span>, <span class="ruby-identifier">mailing_id</span> = <span class="ruby-identifier">options</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-string">'email'</span>), <span class="ruby-identifier">options</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-string">'mailing_id'</span>)
   <span class="ruby-identifier">request_body</span> = <span class="ruby-constant">String</span>.<span class="ruby-identifier">new</span>
@@ -520,7 +592,7 @@ column name, and the value being the value. Returns the Recipient Id.</p>
             
             <div class="method-source-code" id="update_contact-source">
 <pre>
-<span class="ruby-comment"># File lib/xml_api.rb, line 109</span>
+<span class="ruby-comment"># File lib/xml_api.rb, line 149</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">update_contact</span>(<span class="ruby-identifier">options</span>={})
   <span class="ruby-identifier">contact_list_id</span> = <span class="ruby-identifier">options</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-string">'list_id'</span>)
   <span class="ruby-identifier">email</span>           = <span class="ruby-identifier">options</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-string">'email'</span>)
@@ -584,7 +656,7 @@ column name, and the value being the value. Returns the Recipient Id.</p>
             
             <div class="method-source-code" id="result_dom-source">
 <pre>
-<span class="ruby-comment"># File lib/xml_api.rb, line 220</span>
+<span class="ruby-comment"># File lib/xml_api.rb, line 260</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">result_dom</span>(<span class="ruby-identifier">dom</span>)
   <span class="ruby-identifier">dom</span>.<span class="ruby-identifier">elements</span>[<span class="ruby-string">'Envelope'</span>].<span class="ruby-identifier">elements</span>[<span class="ruby-string">'Body'</span>].<span class="ruby-identifier">elements</span>[<span class="ruby-string">'RESULT'</span>]
 <span class="ruby-keyword">end</span></pre>
@@ -617,7 +689,7 @@ column name, and the value being the value. Returns the Recipient Id.</p>
             
             <div class="method-source-code" id="send_xml_api_request-source">
 <pre>
-<span class="ruby-comment"># File lib/xml_api.rb, line 225</span>
+<span class="ruby-comment"># File lib/xml_api.rb, line 265</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">send_xml_api_request</span>(<span class="ruby-identifier">markup</span>)
   <span class="ruby-identifier">result</span> = <span class="ruby-identifier">send_request</span>(<span class="ruby-identifier">markup</span>, <span class="ruby-node">&quot;http://api#{@pod}.silverpop.com/XMLAPI#{@session_id}&quot;</span>)
   <span class="ruby-constant">REXML</span><span class="ruby-operator">::</span><span class="ruby-constant">Document</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">result</span>)
@@ -651,7 +723,7 @@ column name, and the value being the value. Returns the Recipient Id.</p>
             
             <div class="method-source-code" id="session_id-3D-source">
 <pre>
-<span class="ruby-comment"># File lib/xml_api.rb, line 239</span>
+<span class="ruby-comment"># File lib/xml_api.rb, line 279</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">session_id=</span>(<span class="ruby-identifier">session_id</span>)
   <span class="ruby-ivar">@session_id</span> = <span class="ruby-identifier">session_id</span>.<span class="ruby-identifier">blank?</span> <span class="ruby-operator">?</span> <span class="ruby-keyword">nil</span> <span class="ruby-operator">:</span> <span class="ruby-node">&quot;;jsessionid=#{session_id}&quot;</span>
   <span class="ruby-identifier">session_id</span>
@@ -685,7 +757,7 @@ column name, and the value being the value. Returns the Recipient Id.</p>
             
             <div class="method-source-code" id="silverpop_successful-3F-source">
 <pre>
-<span class="ruby-comment"># File lib/xml_api.rb, line 214</span>
+<span class="ruby-comment"># File lib/xml_api.rb, line 254</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">silverpop_successful?</span>(<span class="ruby-identifier">doc</span>)
   <span class="ruby-identifier">success</span> = <span class="ruby-identifier">result_dom</span>(<span class="ruby-identifier">doc</span>).<span class="ruby-identifier">elements</span>[<span class="ruby-string">'SUCCESS'</span>].<span class="ruby-identifier">text</span>.<span class="ruby-identifier">downcase</span> <span class="ruby-keyword">rescue</span> <span class="ruby-string">'false'</span>
   <span class="ruby-identifier">success</span> <span class="ruby-operator">==</span> <span class="ruby-string">'true'</span>
@@ -720,7 +792,7 @@ given message unless the call was successful</p>
             
             <div class="method-source-code" id="validate_silverpop_success-21-source">
 <pre>
-<span class="ruby-comment"># File lib/xml_api.rb, line 232</span>
+<span class="ruby-comment"># File lib/xml_api.rb, line 272</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">validate_silverpop_success!</span>(<span class="ruby-identifier">document</span>, <span class="ruby-identifier">message</span>)
   <span class="ruby-keyword">unless</span> <span class="ruby-identifier">silverpop_successful?</span>(<span class="ruby-identifier">document</span>)
     <span class="ruby-identifier">raise</span> <span class="ruby-identifier">message</span>

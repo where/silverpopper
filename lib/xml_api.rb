@@ -38,12 +38,13 @@ module Silverpopper::XmlApi
 
   # Insert a lead into silverpop
   #
-  # expects a hash containing the strings: list_id and optionally
+  # expects a hash containing the strings: list_id, email and optionally
   # the string auto_reply.  any entries in the hash will be used to
   # populate the column name and values of the lead.
   # Returns the recipient id if successfully added, raises on error.
   def add_contact(options={})
     list_id    = options.delete('list_id')
+    email      = options.delete('email')
     auto_reply = options.delete('auto_reply')
 
     request_body = ''
@@ -55,6 +56,12 @@ module Silverpopper::XmlApi
           xml.LIST_ID list_id
           xml.CREATED_FROM '1'
           xml.SEND_AUTOREPLY 'true' if auto_reply
+
+          xml.COLUMN do
+            xml.NAME 'EMAIL'
+            xml.VALUE email
+          end
+
           options.each do |field, value|
             xml.COLUMN do
               xml.NAME field.to_s
@@ -70,13 +77,46 @@ module Silverpopper::XmlApi
     result_dom(doc).elements['RecipientId'].text rescue nil
   end
 
+  # Remove the contact from a list.
+  #
+  # expects a hash containing the strings: list_id and email.
+  # Any additional columns passed will be treated as 'COLUMNS',
+  # these COLUMNS are used in the case there is not a primary
+  # key on email, and generally will not be used.
+  def remove_contact(options={})
+    list_id    = options.delete('list_id')
+    email      = options.delete('email')
+
+    request_body = ''
+    xml = Builder::XmlMarkup.new(:target => request_body, :indent => 1)
+    xml.instruct!
+    xml.Envelope do
+      xml.Body do
+        xml.RemoveRecipient do
+          xml.LIST_ID list_id
+          xml.EMAIL   email unless email.nil?
+          options.each do |field, value|
+            xml.COLUMN do
+              xml.NAME field.to_s
+              xml.VALUE value.to_s
+            end
+          end
+        end
+      end
+    end
+    doc = send_xml_api_request(request_body)
+    validate_silverpop_success!(doc, "Failure to remove contact")
+    true
+  end
+
   # Request details for lead.  
   #
   # expects a hash that contains the strings:
   # list_id, email.  Returns a hash containing properties
   # (columns) of the lead.
   def select_contact(options={})
-    contact_list_id, email = options.delete('list_id'), options.delete('email')
+    contact_list_id = options.delete('list_id')
+    email           = options.delete('email')
     request_body = String.new
     xml = Builder::XmlMarkup.new(:target => request_body, :indent => 1)
 

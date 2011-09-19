@@ -69,7 +69,7 @@ class Silverpopper::ClientTest < Test::Unit::TestCase
 
     hash = ActiveSupport::OrderedHash.new
     hash['list_id']     = '1'
-    hash['EMAIL']       = 'testman@testman.com'
+    hash['email']       = 'testman@testman.com'
     hash['auto_reply']  = false
     hash['Test Field'] = 'Test Value'
 
@@ -86,14 +86,46 @@ class Silverpopper::ClientTest < Test::Unit::TestCase
 
     hash = ActiveSupport::OrderedHash.new
     hash['list_id']     = '1'
-    hash['EMAIL']       = 'testman@testman.com'
+    hash['email']       = 'testman@testman.com'
     hash['auto_reply']  = false
     hash['Test Field'] = 'Test Value'
 
     assert_raise RuntimeError do
       s.add_contact(hash)
     end
+  end
 
+
+  def test_remove_contact
+    s = new_silverpop
+
+    expect_login
+    expect_remove_contact
+
+    s.login
+
+    hash = ActiveSupport::OrderedHash.new
+    hash['list_id']     = '1'
+    hash['email']       = 'testman@testman.com'
+
+    assert_equal true, s.remove_contact(hash)
+  end
+
+  def test_remove_contact_fails
+    s = new_silverpop
+
+    expect_login
+    expect_send_request(remove_contact_xml, silverpop_session_url).returns(MockHTTPartyResponse.new(200, "<omg />"))
+    
+    s.login
+
+    hash = ActiveSupport::OrderedHash.new
+    hash['list_id']     = '1'
+    hash['email']       = 'testman@testman.com'
+
+    assert_raise RuntimeError do
+      s.remove_contact(hash)
+    end
   end
 
   def test_select_contact
@@ -172,7 +204,6 @@ class Silverpopper::ClientTest < Test::Unit::TestCase
 
     assert_equal '2007408974', s.update_contact(fields.merge({'list_id' => '1', 'email' => 'testman@testman.com'}))
   end
-
 
   def test_send_mailing_fail
     s = new_silverpop
@@ -259,7 +290,6 @@ class Silverpopper::ClientTest < Test::Unit::TestCase
     assert_raise RuntimeError do
       s.send_transact_mail('email' => 'testman@testman.com', 'transaction_id' => '123awesome', 'campaign_id' => 9876, 'PASSWORD_RESET_LINK' => 'www.somelink.com')
     end
-
   end
 
   private
@@ -340,6 +370,18 @@ class Silverpopper::ClientTest < Test::Unit::TestCase
   <RESULT>
 <SUCCESS>TRUE</SUCCESS>
 <RecipientId>2007408974</RecipientId>
+<ORGANIZATION_ID>jhgjhjgjgjjh</ORGANIZATION_ID>
+</RESULT>
+ </Body>
+</Envelope>
+"))
+  end
+
+  def expect_remove_contact
+    expect_send_request(remove_contact_xml, silverpop_session_url).returns(MockHTTPartyResponse.new(200, "<Envelope>
+<Body>
+  <RESULT>
+<SUCCESS>TRUE</SUCCESS>
 <ORGANIZATION_ID>jhgjhjgjgjjh</ORGANIZATION_ID>
 </RESULT>
  </Body>
@@ -458,6 +500,19 @@ class Silverpopper::ClientTest < Test::Unit::TestCase
     <VALUE>Test Value</VALUE>
    </COLUMN>
   </AddRecipient>
+ </Body>
+</Envelope>
+'
+  end
+
+  def remove_contact_xml
+'<?xml version="1.0" encoding="UTF-8"?>
+<Envelope>
+ <Body>
+  <RemoveRecipient>
+   <LIST_ID>1</LIST_ID>
+   <EMAIL>testman@testman.com</EMAIL>
+  </RemoveRecipient>
  </Body>
 </Envelope>
 '
