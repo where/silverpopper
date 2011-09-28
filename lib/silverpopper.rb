@@ -4,6 +4,8 @@ module Silverpopper; end;
 # dependencies
 require 'builder'
 require 'httparty'
+require 'rexml/document'
+require 'active_support/core_ext'
 
 # core files
 require 'common.rb'

@@ -2,6 +2,8 @@ source "http://rubygems.org"
 
 gem 'builder'
 gem 'httparty'
+gem 'activesupport', '~> 3.0.9'
+gem 'i18n'
 
 group :development, :test do
   gem "bundler", "~> 1.0.0"
@@ -9,5 +11,4 @@ group :development, :test do
   gem "rcov", ">= 0"
   gem 'mocha'
   gem 'fakeweb'
-  gem 'activesupport' # for ordered hash
 end
