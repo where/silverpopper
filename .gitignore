@@ -6,6 +6,8 @@ attachment/*
 test/fixtures/*.yml
 log/*
 tmp/**/*
+pkg/**/*
+pkg/*
 db/*.sqlite3
 db/sphinx
 config/*.sphinx.conf
