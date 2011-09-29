@@ -2,8 +2,7 @@ source "http://rubygems.org"
 
 gem 'builder'
 gem 'httparty'
-gem 'activesupport', '~> 3.0.9'
-gem 'i18n'
+gem 'activesupport', '>= 3.0.10'
 
 group :development, :test do
   gem "bundler", "~> 1.0.0"
