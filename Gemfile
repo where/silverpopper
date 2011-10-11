@@ -3,6 +3,7 @@ source "http://rubygems.org"
 gem 'builder'
 gem 'httparty'
 gem 'activesupport', '>= 3.0.10'
+gem 'i18n'
 
 group :development, :test do
   gem "bundler", "~> 1.0.0"
