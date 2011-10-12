@@ -2,7 +2,7 @@ source "http://rubygems.org"
 
 gem 'builder'
 gem 'httparty'
-gem 'activesupport', '>= 3.0.10'
+gem 'activesupport'
 gem 'i18n'
 
 group :development, :test do
