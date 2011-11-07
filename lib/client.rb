@@ -20,6 +20,9 @@ class Silverpopper::Client
     @user_name = options['user_name']
     @password  = options['password']
     @pod       = options['pod'] || 5
+      
+    @api_url = defined?(SILVERPOP_API_URL) ? SILVERPOP_API_URL : "http://api#{@pod}.silverpop.com"
+    @transact_url = defined?(SILVERPOP_TRANSACT_URL) ? SILVERPOP_TRANSACT_URL : "http://transact#{@pod}.silverpop.com"
   end
 
   protected
