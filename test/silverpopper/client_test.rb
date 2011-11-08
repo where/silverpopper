@@ -25,7 +25,7 @@ class Silverpopper::ClientTest < Test::Unit::TestCase
   def test_expect_malformed_login_response
     s = new_silverpop
     
-    expect_send_request(login_request_xml, silverpop_url).
+    expect_send_request_api(login_request_xml, silverpop_url).
       returns(MockHTTPartyResponse.new(200, 
         "<Envelope><Body><RESULT></RESULT></Body></Envelope>"))
 
@@ -48,7 +48,7 @@ class Silverpopper::ClientTest < Test::Unit::TestCase
     s = new_silverpop
 
     expect_login
-    expect_send_request(logout_request_xml, "#{silverpop_url};jsessionid=3631784201").returns(MockHTTPartyResponse.new(200, "<omg />"))
+    expect_send_request_api(logout_request_xml, "#{silverpop_url};jsessionid=3631784201").returns(MockHTTPartyResponse.new(200, "<omg />"))
     
     s.login
     assert_raise RuntimeError do
@@ -80,7 +80,7 @@ class Silverpopper::ClientTest < Test::Unit::TestCase
     s = new_silverpop
 
     expect_login
-    expect_send_request(add_contact_xml, silverpop_session_url).returns(MockHTTPartyResponse.new(200, "<omg />"))
+    expect_send_request_api(add_contact_xml, silverpop_session_url).returns(MockHTTPartyResponse.new(200, "<omg />"))
     
     s.login
 
@@ -115,7 +115,7 @@ class Silverpopper::ClientTest < Test::Unit::TestCase
     s = new_silverpop
 
     expect_login
-    expect_send_request(remove_contact_xml, silverpop_session_url).returns(MockHTTPartyResponse.new(200, "<omg />"))
+    expect_send_request_api(remove_contact_xml, silverpop_session_url).returns(MockHTTPartyResponse.new(200, "<omg />"))
     
     s.login
 
@@ -164,7 +164,7 @@ class Silverpopper::ClientTest < Test::Unit::TestCase
     s = new_silverpop
 
     expect_login
-    expect_send_request(select_contact_xml, silverpop_session_url).returns(MockHTTPartyResponse.new(200, "<omg />"))
+    expect_send_request_api(select_contact_xml, silverpop_session_url).returns(MockHTTPartyResponse.new(200, "<omg />"))
 
     s.login
     
@@ -177,7 +177,7 @@ class Silverpopper::ClientTest < Test::Unit::TestCase
     s = new_silverpop
 
     expect_login
-    expect_send_request(update_contact_xml, silverpop_session_url).returns(MockHTTPartyResponse.new(200, "<omg />"))
+    expect_send_request_api(update_contact_xml, silverpop_session_url).returns(MockHTTPartyResponse.new(200, "<omg />"))
     
     s.login
 
@@ -209,7 +209,7 @@ class Silverpopper::ClientTest < Test::Unit::TestCase
     s = new_silverpop
 
     expect_login
-    expect_send_request(send_mailing_xml, silverpop_session_url).returns(MockHTTPartyResponse.new(200, "<omg />"))
+    expect_send_request_api(send_mailing_xml, silverpop_session_url).returns(MockHTTPartyResponse.new(200, "<omg />"))
 
     s.login
 
@@ -252,7 +252,7 @@ class Silverpopper::ClientTest < Test::Unit::TestCase
     s = new_silverpop
 
     expect_login
-    expect_send_request(schedule_mailing_xml, silverpop_session_url).returns(MockHTTPartyResponse.new(200, "<omg />"))
+    expect_send_request_api(schedule_mailing_xml, silverpop_session_url).returns(MockHTTPartyResponse.new(200, "<omg />"))
 
     s.login
 
@@ -283,7 +283,7 @@ class Silverpopper::ClientTest < Test::Unit::TestCase
     s = new_silverpop
 
     expect_login
-    expect_send_request(transact_mail_xml, transact_session_url).returns(MockHTTPartyResponse.new(200, "<omg />"))
+    expect_send_request_transact(transact_mail_xml, transact_session_url).returns(MockHTTPartyResponse.new(200, "<omg />"))
 
     s.login
 
@@ -322,7 +322,7 @@ class Silverpopper::ClientTest < Test::Unit::TestCase
   end
 
   def expect_send_transact_mail
-    expect_send_request(transact_mail_xml, transact_session_url).returns(MockHTTPartyResponse.new(200, '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+    expect_send_request_transact(transact_mail_xml, transact_session_url).returns(MockHTTPartyResponse.new(200, '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <XTMAILING_RESPONSE>
     <CAMPAIGN_ID>9876</CAMPAIGN_ID>
     <TRANSACTION_ID>123awesome</TRANSACTION_ID>
@@ -336,11 +336,11 @@ class Silverpopper::ClientTest < Test::Unit::TestCase
   end
 
   def expect_select_contact
-    expect_send_request(select_contact_xml, silverpop_session_url).returns(MockHTTPartyResponse.new(200, success_select_xml_response))
+    expect_send_request_api(select_contact_xml, silverpop_session_url).returns(MockHTTPartyResponse.new(200, success_select_xml_response))
   end
 
   def expect_send_mailing
-    expect_send_request(send_mailing_xml, silverpop_session_url).returns(MockHTTPartyResponse.new(200, "<Envelope>
+    expect_send_request_api(send_mailing_xml, silverpop_session_url).returns(MockHTTPartyResponse.new(200, "<Envelope>
 <Body>
   <RESULT>
 <SUCCESS>TRUE</SUCCESS>
@@ -353,7 +353,7 @@ class Silverpopper::ClientTest < Test::Unit::TestCase
 
 
   def expect_schedule_mailing
-    expect_send_request(schedule_mailing_xml, silverpop_session_url).returns(MockHTTPartyResponse.new(200, "<Envelope>
+    expect_send_request_api(schedule_mailing_xml, silverpop_session_url).returns(MockHTTPartyResponse.new(200, "<Envelope>
 <Body>
   <RESULT>
 <SUCCESS>TRUE</SUCCESS>
@@ -365,7 +365,7 @@ class Silverpopper::ClientTest < Test::Unit::TestCase
   end
 
   def expect_add_contact
-    expect_send_request(add_contact_xml, silverpop_session_url).returns(MockHTTPartyResponse.new(200, "<Envelope>
+    expect_send_request_api(add_contact_xml, silverpop_session_url).returns(MockHTTPartyResponse.new(200, "<Envelope>
 <Body>
   <RESULT>
 <SUCCESS>TRUE</SUCCESS>
@@ -378,7 +378,7 @@ class Silverpopper::ClientTest < Test::Unit::TestCase
   end
 
   def expect_remove_contact
-    expect_send_request(remove_contact_xml, silverpop_session_url).returns(MockHTTPartyResponse.new(200, "<Envelope>
+    expect_send_request_api(remove_contact_xml, silverpop_session_url).returns(MockHTTPartyResponse.new(200, "<Envelope>
 <Body>
   <RESULT>
 <SUCCESS>TRUE</SUCCESS>
@@ -390,7 +390,7 @@ class Silverpopper::ClientTest < Test::Unit::TestCase
   end
 
   def expect_update_contact
-    expect_send_request(update_contact_xml, silverpop_session_url).returns(MockHTTPartyResponse.new(200, "<Envelope>
+    expect_send_request_api(update_contact_xml, silverpop_session_url).returns(MockHTTPartyResponse.new(200, "<Envelope>
 <Body>
   <RESULT>
 <SUCCESS>TRUE</SUCCESS>
@@ -403,11 +403,11 @@ class Silverpopper::ClientTest < Test::Unit::TestCase
   end
 
   def expect_logout
-    expect_send_request(logout_request_xml, silverpop_session_url).returns(MockHTTPartyResponse.new(200, "<Envelope>\n<Body>\n  <RESULT>\n<SUCCESS>TRUE</SUCCESS>\n</RESULT>\n </Body>\n</Envelope>\n"))
+    expect_send_request_api(logout_request_xml, silverpop_session_url).returns(MockHTTPartyResponse.new(200, "<Envelope>\n<Body>\n  <RESULT>\n<SUCCESS>TRUE</SUCCESS>\n</RESULT>\n </Body>\n</Envelope>\n"))
   end
 
   def expect_login
-    expect_send_request(login_request_xml, silverpop_url).returns(MockHTTPartyResponse.new(200, "<Envelope><Body><RESULT>
+    expect_send_request_api(login_request_xml, silverpop_url).returns(MockHTTPartyResponse.new(200, "<Envelope><Body><RESULT>
   <SUCCESS>true</SUCCESS>
   <SESSIONID>3631784201</SESSIONID>
   <ORGANIZATION_ID>322a4dc-c6f6d1ebd715e129037</ORGANIZATION_ID>
@@ -418,10 +418,13 @@ class Silverpopper::ClientTest < Test::Unit::TestCase
 ")) 
   end
 
-  def expect_send_request(markup, url)
-    HTTParty.expects(:post).with(url, {:body => markup, :headers => {'Content-type' => 'text/xml;charset=UTF-8'}})
+  def expect_send_request_transact(markup, url)
+    HTTParty.expects(:post).with(url, {:body => markup, :headers => {'Content-type' => 'text/xml;charset=UTF-8', 'X-Intended-Host' => 'transact5'}})
   end
 
+  def expect_send_request_api(markup, url)
+    HTTParty.expects(:post).with(url, {:body => markup, :headers => {'Content-type' => 'text/xml;charset=UTF-8', 'X-Intended-Host' => 'api5'}})
+  end
 
   def transact_mail_xml
 '<?xml version="1.0" encoding="UTF-8"?>

@@ -263,7 +263,7 @@ module Silverpopper::XmlApi
 
   # Execute an xml api request, and parse the response
   def send_xml_api_request(markup)
-    result = send_request(markup, "http://api#{@pod}.silverpop.com/XMLAPI#{@session_id}")
+    result = send_request(markup, "#{@api_url}/XMLAPI#{@session_id}", 'api')
     REXML::Document.new(result)
   end
 
